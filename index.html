@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule Options</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+  :root {
+    --bg:#0f0f13; --surface:#1a1a22; --border:#2a2a38;
+    --accent:#7c6af7; --text:#e8e8f0; --muted:#7070a0;
+    --good:#6af7c0; --bad:#f76a8a; --mid:#f7c46a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;}
+
+  .tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+  .tab-btn{flex:1;padding:14px 8px;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;font-family:'Inter',sans-serif;}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .page{display:none;padding:16px;}
+  .page.active{display:block;}
+
+  h1{font-size:18px;font-weight:700;margin-bottom:4px;color:var(--accent);}
+  .subtitle{font-size:12px;color:var(--muted);margin-bottom:20px;font-family:'JetBrains Mono',monospace;}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+  .filter-label{font-size:11px;color:var(--muted);width:100%;margin-bottom:2px;font-family:'JetBrains Mono',monospace;}
+  .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.15s;}
+  .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .sort-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .sort-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:5px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all 0.15s;}
+  .sort-btn.active{background:#2a1f4a;border-color:var(--accent);color:var(--accent);}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding:10px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+  .legend-dot{width:8px;height:8px;border-radius:2px;}
+  .count-label{font-size:11px;color:var(--muted);margin-bottom:12px;font-family:'JetBrains Mono',monospace;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+  .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
+  .badge-row{display:flex;flex-wrap:wrap;gap:5px;}
+  .badge{font-size:11px;padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+  .badge-work{background:#1a2a1a;color:#6af7a0;border:1px solid #2a5a2a;}
+  .badge-diana{background:#2a1f4a;color:#b09af7;border:1px solid #4a3a8a;}
+  .badge-sleep{background:#1a1f2a;color:#6ab4f7;border:1px solid #2a3a5a;font-size:10px;}
+  .score-badge{font-size:13px;font-weight:700;padding:3px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;}
+  .score-high{background:#0d2d22;color:var(--good);border:1px solid #1a5a40;}
+  .score-mid{background:#2d2500;color:var(--mid);border:1px solid #5a4a00;}
+  .score-low{background:#2d0d15;color:var(--bad);border:1px solid #5a1a28;}
+  .score-zero{background:#1a1a22;color:var(--muted);border:1px solid var(--border);}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .info-item{background:#12121a;border-radius:6px;padding:8px 10px;}
+  .info-item.full{grid-column:span 2;}
+  .info-key{font-size:10px;color:var(--muted);margin-bottom:3px;font-family:'JetBrains Mono',monospace;}
+  .info-val{font-size:12px;font-weight:500;color:var(--text);}
+  .info-val.good{color:var(--good);}
+  .info-val.mid{color:var(--mid);}
+  .info-val.bad{color:var(--bad);}
+  .info-val.dim{color:var(--muted);}
+
+  .calc-title{font-size:16px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+  .calc-subtitle{font-size:12px;color:var(--muted);margin-bottom:24px;font-family:'JetBrains Mono',monospace;}
+  .calc-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+  .calc-col-header{font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;}
+  .calc-col-header span{font-size:10px;color:var(--muted);font-weight:400;}
+  .calc-field{margin-bottom:14px;}
+  .calc-field-label{font-size:10px;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:space-between;}
+  .dayoff-toggle{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);cursor:pointer;}
+  .dayoff-toggle input[type=checkbox]{display:none;}
+  .toggle-pill{width:28px;height:16px;background:var(--border);border-radius:8px;position:relative;transition:background 0.2s;flex-shrink:0;}
+  .toggle-pill::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform 0.2s;}
+  .dayoff-toggle input:checked+.toggle-pill{background:var(--accent);}
+  .dayoff-toggle input:checked+.toggle-pill::after{transform:translateX(12px);}
+
+  .drum{position:relative;height:120px;overflow:hidden;background:#12121a;border-radius:8px;border:1px solid var(--border);touch-action:none;user-select:none;}
+  .drum.disabled{opacity:0.25;pointer-events:none;}
+  .drum-inner{position:absolute;width:100%;}
+  .drum-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'JetBrains Mono',monospace;color:#3a3a60;white-space:nowrap;padding:0 4px;}
+  .drum-hl{position:absolute;top:40px;left:0;right:0;height:40px;border-top:1px solid var(--accent);border-bottom:1px solid var(--accent);pointer-events:none;background:rgba(124,106,247,0.06);}
+  .drum-ft{position:absolute;top:0;left:0;right:0;height:40px;background:linear-gradient(to bottom,#12121a,transparent);pointer-events:none;}
+  .drum-fb{position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,#12121a,transparent);pointer-events:none;}
+
+  .calc-btn{width:100%;padding:14px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;margin-bottom:16px;}
+  .calc-btn:active{opacity:0.8;}
+  .calc-result{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;display:none;}
+  .calc-result.visible{display:block;}
+  .result-big{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace;text-align:center;padding:12px 0 4px;}
+  .result-big.good{color:var(--good);}
+  .result-big.mid{color:var(--mid);}
+  .result-big.bad{color:var(--bad);}
+  .result-big.dim{color:var(--muted);}
+  .result-label{text-align:center;font-size:11px;color:var(--muted);margin-bottom:16px;font-family:'JetBrains Mono',monospace;}
+  .result-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid #1e1e2a;gap:8px;}
+  .result-row:last-child{border-bottom:none;}
+  .result-key{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+  .result-val{font-size:12px;font-weight:600;color:var(--text);text-align:right;}
+  .result-val.good{color:var(--good);}
+  .result-val.mid{color:var(--mid);}
+</style>
+</head>
+<body>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('browse',this)">Browse All (48)</button>
+  <button class="tab-btn" onclick="switchTab('calc',this)">Custom Calculator</button>
+</div>
+
+<div class="page active" id="page-browse">
+  <h1>Schedule Options</h1>
+  <div class="subtitle">Woojoon work start x Diana work/sleep — 48 combinations</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--good)"></div>Contact 6h+</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--mid)"></div>3~5h</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--bad)"></div>1~2h</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--muted)"></div>0h</div>
+  </div>
+  <div class="filter-bar" id="workFilter">
+    <div class="filter-label">Woojoon work start time (KST)</div>
+    <button class="filter-btn active" onclick="setFilter('work','all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('work','09',this)">9:00</button>
+    <button class="filter-btn" onclick="setFilter('work','11',this)">11:00</button>
+    <button class="filter-btn" onclick="setFilter('work','1130',this)">11:30</button>
+    <button class="filter-btn" onclick="setFilter('work','13',this)">13:00</button>
+  </div>
+  <div class="filter-bar" id="dianaFilter">
+    <div class="filter-label">Diana's work pattern</div>
+    <button class="filter-btn active" onclick="setFilter('diana','all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('diana','9to6',this)">9-to-6</button>
+    <button class="filter-btn" onclick="setFilter('diana','morning',this)">Morning shift</button>
+    <button class="filter-btn" onclick="setFilter('diana','afternoon',this)">Afternoon shift</button>
+  </div>
+  <div class="sort-bar">
+    <div class="filter-label" style="width:100%">Sort by</div>
+    <button class="sort-btn active" onclick="setSort('contact',this)">Contact time ↓</button>
+    <button class="sort-btn" onclick="setSort('sleep',this)">Sleep overlap ↓</button>
+    <button class="sort-btn" onclick="setSort('work',this)">Work start ↑</button>
+  </div>
+  <div class="count-label" id="countLabel"></div>
+  <div id="container"></div>
+</div>
+
+<div class="page" id="page-calc">
+  <div class="calc-title">Custom Calculator</div>
+  <div class="calc-subtitle">Set actual schedules — results update on calculate</div>
+  <div class="calc-columns">
+    <div>
+      <div class="calc-col-header">Woojoon <span>(KST / CET)</span></div>
+      <div class="calc-field">
+        <div class="calc-field-label">
+          <span>Work start</span>
+          <label class="dayoff-toggle">
+            <input type="checkbox" id="wo-dayoff" onchange="toggleDayoff('wo')">
+            <div class="toggle-pill"></div><span>Day off</span>
+          </label>
+        </div>
+        <div class="drum" id="drum-ws"></div>
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-label"><span>Work end</span></div>
+        <div class="drum" id="drum-we"></div>
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-label"><span>Bedtime</span></div>
+        <div class="drum" id="drum-wb"></div>
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-label"><span>Wake up</span></div>
+        <div class="drum" id="drum-ww"></div>
+      </div>
+    </div>
+    <div>
+      <div class="calc-col-header">Diana <span>(KST / CET)</span></div>
+      <div class="calc-field">
+        <div class="calc-field-label">
+          <span>Work start</span>
+          <label class="dayoff-toggle">
+            <input type="checkbox" id="di-dayoff" onchange="toggleDayoff('di')">
+            <div class="toggle-pill"></div><span>Day off</span>
+          </label>
+        </div>
+        <div class="drum" id="drum-ds"></div>
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-label"><span>Work end</span></div>
+        <div class="drum" id="drum-de"></div>
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-label"><span>Bedtime</span></div>
+        <div class="drum" id="drum-db"></div>
+      </div>
+      <div class="calc-field">
+        <div class="calc-field-label"><span>Wake up</span></div>
+        <div class="drum" id="drum-dw"></div>
+      </div>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="calcCustom()">Calculate</button>
+  <div class="calc-result" id="calcResult">
+    <div class="result-big" id="res-big"></div>
+    <div class="result-label">available contact time</div>
+    <div class="result-row"><span class="result-key">Contact window</span><span class="result-val" id="res-contact"></span></div>
+    <div class="result-row"><span class="result-key">Sleep overlap</span><span class="result-val" id="res-overlap"></span></div>
+    <div class="result-row"><span class="result-key">Woojoon sleep</span><span class="result-val" id="res-w-sleep"></span></div>
+    <div class="result-row"><span class="result-key">Diana sleep</span><span class="result-val" id="res-d-sleep"></span></div>
+  </div>
+</div>
+
+<script>
+const IH = 40;
+
+// ── UTILS ──
+function h2m(h){return h*60;}
+function tStr(m){const h=Math.floor(m/60)%24,min=m%60;return h+':'+(min===0?'00':min<10?'0'+min:min);}
+function cet(h){return(h-8+24)%24;}
+function label(h){return h+':00 KST ('+cet(h)+':00 CET)';}
+function mod24(v){return((v%24)+24)%24;}
+
+function intersect(a,b){
+  function exp(s,e){if(e<=s)e+=1440;return[s,e];}
+  let best=0,bs=0,be=0;
+  for(let sa=0;sa<2;sa++)for(let sb=0;sb<2;sb++){
+    const[as,ae]=exp(a[0]+sa*1440,a[1]+sa*1440);
+    const[bss,bse]=exp(b[0]+sb*1440,b[1]+sb*1440);
+    const os=Math.max(as,bss),oe=Math.min(ae,bse);
+    if(oe-os>best){best=oe-os;bs=os;be=oe;}
+  }
+  return{min:best,start:bs%1440,end:be%1440};
+}
+
+// ── TABS ──
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── BROWSE DATA ──
+const workOpts=[
+  {key:'09',label:'9:00 start', end:h2m(17),wake:h2m(8), sleep:h2m(1)},
+  {key:'11',label:'11:00 start',end:h2m(19),wake:h2m(10),sleep:h2m(3)},
+  {key:'1130',label:'11:30 start',end:h2m(19)+30,wake:h2m(10)+30,sleep:h2m(3)+30},
+  {key:'13',label:'13:00 start',end:h2m(21),wake:h2m(12),sleep:h2m(5)},
+];
+const dOpts=[
+  {de:23,koSleep:h2m(7), koWake:h2m(15)},
+  {de:22,koSleep:h2m(6), koWake:h2m(14)},
+  {de:21,koSleep:h2m(5), koWake:h2m(13)},
+  {de:20,koSleep:h2m(4), koWake:h2m(12)},
+];
+const patterns=[
+  {key:'9to6',    label:'9-to-6',         getSegs:d=>[[h2m(2),d.koSleep]]},
+  {key:'morning', label:'Morning shift',   getSegs:d=>[[h2m(21),d.koSleep]]},
+  {key:'afternoon',label:'Afternoon shift',getSegs:d=>[[h2m(17),h2m(21)],[h2m(2),d.koSleep]]},
+];
+
+const browseData=[];
+for(const w of workOpts){
+  for(const pat of patterns){
+    for(const d of dOpts){
+      let totalMin=0;
+      const contactParts=[];
+      for(const seg of pat.getSegs(d)){
+        const r=intersect([w.end,w.sleep],seg);
+        if(r.min>0){
+          totalMin+=r.min;
+          contactParts.push(tStr(r.start)+'~'+tStr(r.end)+' KST ('+cet(r.start/60)+':00~'+cet(r.end/60)+':00 CET)');
+        }
+      }
+      const contactH=Math.round(totalMin/60*10)/10;
+      const sr=intersect([w.sleep,w.wake],[d.koSleep,d.koWake]);
+      browseData.push({
+        work:w.key, workLabel:w.label,
+        wakeup: tStr(w.wake)+' KST ('+cet(w.wake/60)+':00 CET)',
+        sleepTime: tStr(w.sleep)+' KST ('+cet(w.sleep/60)+':00 CET)',
+        offWork: tStr(w.end)+' KST ('+cet(w.end/60)+':00 CET)',
+        diana:pat.key, dianaLabel:pat.label,
+        dianaSleepStr: tStr(d.koSleep)+'~'+tStr(d.koWake)+' KST ('+d.de+':00~'+((d.de+8)%24)+':00 CET)',
+        dianaBadge: 'Diana bedtime '+d.de+':00 CET',
+        contactH, overlapH: Math.round(sr.min/60*10)/10,
+        contactStr: contactParts.length?contactParts.join(', '):'None',
+      });
+    }
+  }
+}
+
+let wF='all', dF='all', sBy='contact';
+function setFilter(type,val,btn){
+  if(type==='work'){wF=val;document.querySelectorAll('#workFilter .filter-btn').forEach(b=>b.classList.remove('active'));}
+  else{dF=val;document.querySelectorAll('#dianaFilter .filter-btn').forEach(b=>b.classList.remove('active'));}
+  btn.classList.add('active');render();
+}
+function setSort(val,btn){
+  sBy=val;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');render();
+}
+function sClass(h){return h===0?'score-zero':h>=6?'score-high':h>=3?'score-mid':'score-low';}
+function vClass(h){return h===0?'dim':h>=6?'good':h>=3?'mid':'bad';}
+function slClass(h){return h>=6?'good':h>=3?'mid':'';}
+
+function render(){
+  const list=browseData
+    .filter(d=>(wF==='all'||d.work===wF)&&(dF==='all'||d.diana===dF))
+    .sort((a,b)=>sBy==='contact'?b.contactH-a.contactH:sBy==='sleep'?b.overlapH-a.overlapH:a.work.localeCompare(b.work));
+  document.getElementById('countLabel').textContent=list.length+' combinations shown';
+  const c=document.getElementById('container');
+  c.innerHTML='';
+  list.forEach(d=>{
+    const el=document.createElement('div');
+    el.className='card';
+    el.innerHTML=`
+      <div class="card-header">
+        <div class="badge-row">
+          <span class="badge badge-work">Woojoon ${d.workLabel}</span>
+          <span class="badge badge-diana">Diana: ${d.dianaLabel}</span>
+          <span class="badge badge-sleep">${d.dianaBadge}</span>
+        </div>
+        <span class="score-badge ${sClass(d.contactH)}">${d.contactH}h</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-key">Woojoon wake / sleep</div><div class="info-val">${d.wakeup} / ${d.sleepTime}</div></div>
+        <div class="info-item"><div class="info-key">Woojoon off work</div><div class="info-val">${d.offWork}</div></div>
+        <div class="info-item full"><div class="info-key">Diana's sleep</div><div class="info-val">${d.dianaSleepStr}</div></div>
+        <div class="info-item"><div class="info-key">Sleep overlap</div><div class="info-val ${slClass(d.overlapH)}">${d.overlapH}h</div></div>
+        <div class="info-item full"><div class="info-key">Available contact window</div><div class="info-val ${vClass(d.contactH)}">${d.contactStr}${d.contactH>0?' — '+d.contactH+'h total':''}</div></div>
+      </div>`;
+    c.appendChild(el);
+  });
+}
+render();
+
+// ── DRUM ──
+const drums={};
+
+function makeDrum(id, defaultVal, isBedtime, who){
+  const wrapper=document.getElementById(id);
+  const inner=document.createElement('div');
+  inner.className='drum-inner';
+  for(let i=0;i<2;i++) inner.appendChild(Object.assign(document.createElement('div'),{className:'drum-item'}));
+  for(let h=0;h<24;h++){
+    const d=Object.assign(document.createElement('div'),{className:'drum-item',textContent:label(h)});
+    d.dataset.h=h; inner.appendChild(d);
+  }
+  for(let i=0;i<2;i++) inner.appendChild(Object.assign(document.createElement('div'),{className:'drum-item'}));
+  ['drum-hl','drum-ft','drum-fb'].forEach(cls=>{
+    wrapper.appendChild(Object.assign(document.createElement('div'),{className:cls}));
+  });
+  wrapper.insertBefore(inner, wrapper.firstChild);
+
+  const state={cur:defaultVal,startY:0,startVal:defaultVal,dragging:false,vel:0,lastY:0,lastT:0,rawVal:null};
+  drums[id]=state;
+
+  function getWR(){
+    if(!isBedtime||!who) return null;
+    if(document.getElementById(who==='wo'?'wo-dayoff':'di-dayoff').checked) return null;
+    return{s:drums[who==='wo'?'drum-ws':'drum-ds'].cur, e:drums[who==='wo'?'drum-we':'drum-de'].cur};
+  }
+  function inWR(h,wr){
+    if(!wr) return false;
+    return wr.s<wr.e ? h>=wr.s&&h<wr.e : h>=wr.s||h<wr.e;
+  }
+  function skipWR(h,dir,wr){
+    for(let t=0;t<24&&inWR(h,wr);t++) h=mod24(h+dir);
+    return h;
+  }
+  function paint(v){
+    const wr=getWR();
+    inner.querySelectorAll('.drum-item[data-h]').forEach(el=>{
+      const h=parseInt(el.dataset.h);
+      const diff=Math.min(Math.abs(h-v),24-Math.abs(h-v));
+      if(wr&&inWR(h,wr)){el.style.color='#3a3a60';el.style.fontWeight='400';el.style.fontSize='11px';return;}
+      el.style.color=diff===0?'#ffffff':diff===1?'#7070a0':'#3a3a60';
+      el.style.fontWeight=diff===0?'700':'400';
+      el.style.fontSize=diff===0?'12px':'11px';
+    });
+  }
+  function setVal(v,animate,dir=1){
+    v=mod24(Math.round(v));
+    const wr=getWR();
+    if(wr&&inWR(v,wr)) v=skipWR(v,dir,wr);
+    state.cur=v;
+    inner.style.transition=animate?'transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94)':'none';
+    inner.style.transform='translateY('+(-(v+1)*IH)+'px)';
+    paint(v);
+  }
+  function moveRaw(raw){
+    const v=mod24(raw);
+    inner.style.transform='translateY('+(-(v+1)*IH)+'px)';
+    paint(mod24(Math.round(raw)));
+  }
+
+  wrapper.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    state.dragging=true; state.startY=e.touches[0].clientY;
+    state.startVal=state.cur; state.lastY=state.startY;
+    state.lastT=Date.now(); state.vel=0; state.rawVal=null;
+    inner.style.transition='none';
+  },{passive:false});
+  wrapper.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    if(!state.dragging) return;
+    const y=e.touches[0].clientY, now=Date.now(), dt=now-state.lastT;
+    if(dt>0) state.vel=(state.lastY-y)/dt;
+    state.lastY=y; state.lastT=now;
+    state.rawVal=state.startVal+(state.startY-y)/IH;
+    moveRaw(state.rawVal);
+  },{passive:false});
+  wrapper.addEventListener('touchend',()=>{
+    if(!state.dragging) return;
+    state.dragging=false;
+    const base=state.rawVal??state.startVal;
+    setVal(base+state.vel*200/IH, true, base>=state.startVal?1:-1);
+  });
+
+  wrapper.addEventListener('mousedown',e=>{
+    state.dragging=true; state.startY=e.clientY;
+    state.startVal=state.cur; state.lastY=e.clientY;
+    state.lastT=Date.now(); state.vel=0; state.rawVal=null;
+    inner.style.transition='none'; e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!state.dragging||drums[id]!==state) return;
+    const now=Date.now(), dt=now-state.lastT;
+    if(dt>0) state.vel=(state.lastY-e.clientY)/dt;
+    state.lastY=e.clientY; state.lastT=now;
+    state.rawVal=state.startVal+(state.startY-e.clientY)/IH;
+    moveRaw(state.rawVal);
+  });
+  window.addEventListener('mouseup',()=>{
+    if(!state.dragging||drums[id]!==state) return;
+    state.dragging=false;
+    const base=state.rawVal??state.startVal;
+    setVal(base+state.vel*150/IH, true, base>=state.startVal?1:-1);
+  });
+  wrapper.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const dir=e.deltaY>0?1:-1;
+    setVal(state.cur+dir, true, dir);
+  },{passive:false});
+
+  setVal(defaultVal, false);
+}
+
+makeDrum('drum-ws', 9,  false, null);
+makeDrum('drum-we', 17, false, null);
+makeDrum('drum-wb', 3,  true,  'wo');
+makeDrum('drum-ww', 10, false, null);
+makeDrum('drum-ds', 9,  false, null);
+makeDrum('drum-de', 18, false, null);
+makeDrum('drum-db', 23, true,  'di');
+makeDrum('drum-dw', 7,  false, null);
+
+// ── DAY OFF ──
+function toggleDayoff(who){
+  const off=document.getElementById(who==='wo'?'wo-dayoff':'di-dayoff').checked;
+  document.getElementById(who==='wo'?'drum-ws':'drum-ds').classList.toggle('disabled',off);
+  document.getElementById(who==='wo'?'drum-we':'drum-de').classList.toggle('disabled',off);
+}
+
+// ── CALCULATE ──
+function calcCustom(){
+  const woBed=drums['drum-wb'].cur, woWake=drums['drum-ww'].cur;
+  const diBed=drums['drum-db'].cur, diWake=drums['drum-dw'].cur;
+  const woDayoff=document.getElementById('wo-dayoff').checked;
+  const diDayoff=document.getElementById('di-dayoff').checked;
+
+  const woActive=woDayoff?[[h2m(woWake),h2m(woBed)]]:[[h2m(drums['drum-we'].cur),h2m(woBed)]];
+  const diActive=diDayoff?[[h2m(diWake),h2m(diBed)]]:[[h2m(drums['drum-de'].cur),h2m(diBed)]];
+
+  let totalMin=0; const parts=[];
+  for(const wa of woActive) for(const da of diActive){
+    const r=intersect(wa,da);
+    if(r.min>0){
+      totalMin+=r.min;
+      parts.push(tStr(r.start)+'~'+tStr(r.end)+' KST ('+cet(r.start/60)+':00~'+cet(r.end/60)+':00 CET)');
+    }
+  }
+  const contactH=Math.round(totalMin/60*10)/10;
+  const sr=intersect([h2m(woBed),h2m(woWake)],[h2m(diBed),h2m(diWake)]);
+  const overlapH=Math.round(sr.min/60*10)/10;
+
+  const res=document.getElementById('calcResult');
+  res.classList.add('visible');
+  const bigEl=document.getElementById('res-big');
+  bigEl.textContent=contactH+'h';
+  bigEl.className='result-big '+(contactH>=6?'good':contactH>=3?'mid':contactH>0?'bad':'dim');
+  document.getElementById('res-contact').textContent=parts.length?parts.join(', '):'None';
+  const ovEl=document.getElementById('res-overlap');
+  ovEl.textContent=overlapH+'h';
+  ovEl.className='result-val '+(overlapH>=6?'good':overlapH>=3?'mid':'');
+  document.getElementById('res-w-sleep').textContent=woBed+':00~'+woWake+':00 KST ('+cet(woBed)+':00~'+cet(woWake)+':00 CET, '+((woWake-woBed+24)%24)+'h)';
+  document.getElementById('res-d-sleep').textContent=diBed+':00~'+diWake+':00 KST ('+cet(diBed)+':00~'+cet(diWake)+':00 CET, '+((diWake-diBed+24)%24)+'h)';
+  res.scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
