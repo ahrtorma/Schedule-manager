@@ -6,66 +6,72 @@
 <title>비자 플랜 대시보드</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
-  * { margin:0; padding:0; box-sizing:border-box; }
-  :root {
-    --bg:#0a0a0f; --surface:#12121a; --surface2:#1a1a26; --border:#2a2a3d;
-    --text:#e8e8f0; --dim:#7a7a9a;
-    --blue:#4d9fff; --green:#3dffa0; --yellow:#ffd94d;
-    --red:#ff5c5c; --purple:#b84dff; --orange:#ff8c4d;
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#2a2a3d;
+    --text:#e8e8f0;--dim:#7a7a9a;
+    --blue:#4d9fff;--green:#3dffa0;--yellow:#ffd94d;
+    --red:#ff5c5c;--purple:#b84dff;--orange:#ff8c4d;
   }
-  body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding:20px 16px 60px; }
-  .header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:26px; gap:12px; }
-  .header-left h1 { font-size:19px; font-weight:900; margin-bottom:4px; }
-  .header-left p { font-size:11px; color:var(--dim); font-family:'JetBrains Mono',monospace; }
-  .lang-toggle { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; flex-shrink:0; }
-  .lang-btn { padding:7px 13px; font-size:12px; font-weight:600; cursor:pointer; border:none; background:var(--surface); color:var(--dim); transition:all 0.2s; font-family:'Noto Sans KR',sans-serif; }
-  .lang-btn.active { background:var(--blue); color:#fff; }
-  .tab-bar { display:flex; gap:6px; margin-bottom:18px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
-  .tab-bar::-webkit-scrollbar { display:none; }
-  .tab { flex-shrink:0; padding:8px 14px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--dim); font-family:'Noto Sans KR',sans-serif; font-size:12px; font-weight:500; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-  .tab:hover { border-color:var(--blue); color:var(--text); }
-  .tab.active { font-weight:700; color:#fff; }
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px 16px 60px}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;gap:12px}
+  .header-left h1{font-size:19px;font-weight:900;margin-bottom:4px}
+  .header-left p{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+  .lang-toggle{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0}
+  .lang-btn{padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:var(--surface);color:var(--dim);transition:all 0.2s;font-family:'Noto Sans KR',sans-serif}
+  .lang-btn.active{background:var(--blue);color:#fff}
+  .tab-bar{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+  .tab-bar::-webkit-scrollbar{display:none}
+  .tab{flex-shrink:0;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--dim);font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+  .tab:hover{border-color:var(--blue);color:var(--text)}
+  .tab.active{font-weight:700;color:#fff}
   .tab.c-blue{background:var(--blue);border-color:var(--blue);color:#fff}
   .tab.c-green{background:var(--green);border-color:var(--green);color:#000!important}
   .tab.c-yellow{background:var(--yellow);border-color:var(--yellow);color:#000!important}
   .tab.c-purple{background:var(--purple);border-color:var(--purple)}
   .tab.c-orange{background:var(--orange);border-color:var(--orange)}
-  .panel { display:none; }
-  .panel.active { display:block; animation:fadeIn 0.25s ease; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-  .ph { display:flex; align-items:center; gap:10px; margin-bottom:16px; padding:13px 15px; background:var(--surface); border-radius:11px; border:1px solid var(--border); }
-  .badge { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; padding:3px 9px; border-radius:5px; flex-shrink:0; }
-  .b-blue{background:var(--blue);color:#fff} .b-green{background:var(--green);color:#000} .b-yellow{background:var(--yellow);color:#000} .b-purple{background:var(--purple);color:#fff} .b-orange{background:var(--orange);color:#fff}
-  .ph-title { font-size:14px; font-weight:700; }
-  .ph-status { margin-left:auto; font-size:10px; font-family:'JetBrains Mono',monospace; padding:2px 7px; border-radius:4px; white-space:nowrap; flex-shrink:0; }
-  .s-ok{background:rgba(61,255,160,.15);color:var(--green)} .s-warn{background:rgba(255,217,77,.15);color:var(--yellow)} .s-bad{background:rgba(255,92,92,.15);color:var(--red)} .s-pend{background:rgba(77,159,255,.15);color:var(--blue)}
-  .sec { margin-bottom:14px; }
-  .sec-t { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--dim); margin-bottom:8px; font-family:'JetBrains Mono',monospace; }
-  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
-  .item { display:flex; align-items:flex-start; gap:10px; padding:11px 13px; border-bottom:1px solid var(--border); }
-  .item:last-child { border-bottom:none; }
-  .item:hover { background:var(--surface2); }
-  .dot { width:7px; height:7px; border-radius:50%; margin-top:5px; flex-shrink:0; }
-  .dg{background:var(--green);box-shadow:0 0 5px var(--green)} .dy{background:var(--yellow);box-shadow:0 0 5px var(--yellow)} .dr{background:var(--red);box-shadow:0 0 5px var(--red)} .db{background:var(--blue);box-shadow:0 0 5px var(--blue)} .dgr{background:var(--dim)}
-  .ic { flex:1; min-width:0; }
-  .il { font-size:12px; font-weight:600; line-height:1.4; margin-bottom:2px; }
-  .id { font-size:11px; color:var(--dim); line-height:1.5; }
-  .tag { font-size:10px; font-family:'JetBrains Mono',monospace; padding:2px 6px; border-radius:4px; flex-shrink:0; margin-top:1px; white-space:nowrap; }
-  .tg{background:rgba(61,255,160,.15);color:var(--green)} .ty{background:rgba(255,217,77,.15);color:var(--yellow)} .tr{background:rgba(255,92,92,.15);color:var(--red)} .tb{background:rgba(77,159,255,.15);color:var(--blue)} .tgr{background:rgba(122,122,154,.15);color:var(--dim)}
-  .hb { padding:11px 13px; border-radius:10px; border-left:3px solid; margin-bottom:13px; font-size:11px; line-height:1.6; }
-  .hg{border-color:var(--green);background:rgba(61,255,160,.05)} .hy{border-color:var(--yellow);background:rgba(255,217,77,.05)} .hr{border-color:var(--red);background:rgba(255,92,92,.05)} .hbu{border-color:var(--blue);background:rgba(77,159,255,.05)}
-  .hb strong { font-weight:700; }
-  .g2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:13px; }
-  .stat { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 13px; }
-  .sl { font-size:10px; color:var(--dim); font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
-  .sv { font-size:17px; font-weight:900; font-family:'JetBrains Mono',monospace; }
-  .ss { font-size:10px; color:var(--dim); margin-top:2px; }
-  .ko,.ru{display:none}
-  body.lko .ko{display:contents}
-  body.lru .ru{display:contents}
-  .kob,.rub{display:none}
-  body.lko .kob{display:block}
-  body.lru .rub{display:block}
+  .subtab-bar{display:flex;gap:5px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:12px;overflow-x:auto;scrollbar-width:none}
+  .subtab-bar::-webkit-scrollbar{display:none}
+  .subtab{flex-shrink:0;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+  .subtab:hover{color:var(--text);border-color:rgba(77,159,255,.4)}
+  .subtab.active{background:rgba(77,159,255,.15);border-color:var(--blue);color:var(--blue);font-weight:700}
+  .panel{display:none}
+  .panel.active{display:block;animation:fadeIn 0.25s ease}
+  .subpanel{display:none}
+  .subpanel.active{display:block;animation:fadeIn 0.2s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .ph{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;padding:13px 15px;background:var(--surface);border-radius:11px;border:1px solid var(--border)}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;flex-shrink:0}
+  .b-blue{background:var(--blue);color:#fff}.b-green{background:var(--green);color:#000}.b-yellow{background:var(--yellow);color:#000}.b-purple{background:var(--purple);color:#fff}.b-orange{background:var(--orange);color:#fff}
+  .ph-title{font-size:14px;font-weight:700}
+  .ph-status{margin-left:auto;font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+  .s-ok{background:rgba(61,255,160,.15);color:var(--green)}.s-warn{background:rgba(255,217,77,.15);color:var(--yellow)}.s-bad{background:rgba(255,92,92,.15);color:var(--red)}.s-pend{background:rgba(77,159,255,.15);color:var(--blue)}
+  .sec{margin-bottom:14px}
+  .sec-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .item{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-bottom:1px solid var(--border)}
+  .item:last-child{border-bottom:none}
+  .item:hover{background:var(--surface2)}
+  .dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+  .dg{background:var(--green);box-shadow:0 0 5px var(--green)}.dy{background:var(--yellow);box-shadow:0 0 5px var(--yellow)}.dr{background:var(--red);box-shadow:0 0 5px var(--red)}.db{background:var(--blue);box-shadow:0 0 5px var(--blue)}.dgr{background:var(--dim)}
+  .ic{flex:1;min-width:0}
+  .il{font-size:12px;font-weight:600;line-height:1.4;margin-bottom:2px}
+  .id{font-size:11px;color:var(--dim);line-height:1.5}
+  .tag{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:4px;flex-shrink:0;margin-top:1px;white-space:nowrap}
+  .tg{background:rgba(61,255,160,.15);color:var(--green)}.ty{background:rgba(255,217,77,.15);color:var(--yellow)}.tr{background:rgba(255,92,92,.15);color:var(--red)}.tb{background:rgba(77,159,255,.15);color:var(--blue)}.tgr{background:rgba(122,122,154,.15);color:var(--dim)}
+  .hb{padding:11px 13px;border-radius:10px;border-left:3px solid;margin-bottom:13px;font-size:11px;line-height:1.6}
+  .hg{border-color:var(--green);background:rgba(61,255,160,.05)}.hy{border-color:var(--yellow);background:rgba(255,217,77,.05)}.hr{border-color:var(--red);background:rgba(255,92,92,.05)}.hbu{border-color:var(--blue);background:rgba(77,159,255,.05)}
+  .hb strong{font-weight:700}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 13px}
+  .sl{font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+  .sv{font-size:17px;font-weight:900;font-family:'JetBrains Mono',monospace}
+  .ss{font-size:10px;color:var(--dim);margin-top:2px}
+  .new{font-size:9px;font-family:'JetBrains Mono',monospace;padding:1px 5px;border-radius:3px;background:rgba(61,255,160,.2);color:var(--green);margin-left:6px;vertical-align:middle}
+  .ko{display:inline}.ru{display:none}
+  .kob{display:block}.rub{display:none}
+  body.lru .ko{display:none}body.lru .ru{display:inline}
+  body.lru .kob{display:none}body.lru .rub{display:block}
 </style>
 </head>
 <body class="lko">
@@ -73,7 +79,7 @@
 <div class="header">
   <div class="header-left">
     <h1>🛂 <span class="ko">비자 플랜 대시보드</span><span class="ru">Панель виз</span></h1>
-    <p>나원준 × Діана // 2026.03 <span class="ko">기준</span><span class="ru">обновлено</span></p>
+    <p>나원준 × Діана // 2026.03 <span class="ko">업데이트 (KVAC 베를린 2026.02.17 기준)</span><span class="ru">обновлено (KVAC Берлин 17.02.2026)</span></p>
   </div>
   <div class="lang-toggle">
     <button class="lang-btn active" data-lang="ko">한국어</button>
@@ -82,267 +88,301 @@
 </div>
 
 <div class="tab-bar">
-  <button class="tab active c-blue" data-panel="f6" data-color="c-blue">F-6 <span class="ko">결혼</span><span class="ru">Брак</span></button>
-  <button class="tab" data-panel="c3" data-color="c-yellow">C-3 <span class="ko">관광</span><span class="ru">Туризм</span></button>
-  <button class="tab" data-panel="h1" data-color="c-green">H-1 <span class="ko">워홀</span><span class="ru">Раб. отпуск</span></button>
-  <button class="tab" data-panel="d4" data-color="c-orange">D-4 <span class="ko">어학당</span><span class="ru">Курсы</span></button>
-  <button class="tab" data-panel="jeju" data-color="c-purple"><span class="ko">제주무비자</span><span class="ru">Чеджу</span></button>
+  <button class="tab active c-blue" data-panel="f6">F-6 <span class="ko">결혼</span><span class="ru">Брак</span></button>
+  <button class="tab" data-panel="c3">C-3 <span class="ko">관광</span><span class="ru">Туризм</span></button>
+  <button class="tab" data-panel="h1">H-1 <span class="ko">워홀</span><span class="ru">Раб.отпуск</span></button>
+  <button class="tab" data-panel="d4">D-4 <span class="ko">어학당</span><span class="ru">Курсы</span></button>
+  <button class="tab" data-panel="jeju"><span class="ko">제주 무비자</span><span class="ru">Чеджу</span></button>
 </div>
 
-<!-- F-6 -->
+<!-- ===== F-6 ===== -->
 <div id="panel-f6" class="panel active">
   <div class="ph">
     <span class="badge b-blue">F-6</span>
     <span class="ph-title kob">결혼이민 비자 — 핵심 루트</span>
     <span class="ph-title rub">Виза по браку — главный путь</span>
-    <span class="ph-status s-warn kob">진행 중</span>
-    <span class="ph-status s-warn rub">В процессе</span>
+    <span class="ph-status s-warn"><span class="ko">진행 중</span><span class="ru">В процессе</span></span>
+  </div>
+  <div class="subtab-bar">
+    <button class="subtab active" data-sub="f6-overview"><span class="ko">개요</span><span class="ru">Обзор</span></button>
+    <button class="subtab" data-sub="f6-income">💰 <span class="ko">소득 요건</span><span class="ru">Доход</span></button>
+    <button class="subtab" data-sub="f6-comms">💬 <span class="ko">의사소통</span><span class="ru">Язык</span></button>
+    <button class="subtab" data-sub="f6-timing">🗓️ <span class="ko">타이밍</span><span class="ru">Сроки</span></button>
+    <button class="subtab" data-sub="f6-docs">📋 <span class="ko">서류</span><span class="ru">Документы</span></button>
+    <button class="subtab" data-sub="f6-marriage">💍 <span class="ko">혼인신고</span><span class="ru">Регистрация</span></button>
   </div>
 
-  <div class="g2">
-    <div class="stat"><div class="sl kob">소득기준(2인)</div><div class="sl rub">Доход(2 чел.)</div><div class="sv" style="color:var(--yellow)">2,520만</div><div class="ss kob">연간 / 월 210만원+</div><div class="ss rub">год / от 2.1M/мес</div></div>
-    <div class="stat"><div class="sl kob">처리기간</div><div class="sl rub">Срок</div><div class="sv" style="color:var(--blue)">2~4주</div><div class="ss kob">KVAC 베를린</div><div class="ss rub">KVAC Берлин</div></div>
-  </div>
-
-  <div class="hb hr kob">⚠️ <strong>중요 주의사항</strong> — F-6 비자 거절 시 6개월간 재신청 불가. 서류 준비를 처음부터 완벽하게 해야 하며, 불확실한 상황에서는 행정사 통해 진행 강력 권장.</div>
-  <div class="hb hr rub">⚠️ <strong>Важно</strong> — При отказе в F-6 повторная подача только через 6 месяцев. Документы должны быть подготовлены идеально с первого раза. Рекомендуется специалист.</div>
-
-  <div class="hb hg kob">✅ <strong>KVAC 베를린 (2026.03.21)</strong> — "장기사증 종류 상관없이 장기사증이면 면제대상에 해당될 수 있습니다" → 워홀(H-1) 포함. 단, "해당될 수 있습니다"이므로 최종 판단은 심사관 재량.</div>
-  <div class="hb hg rub">✅ <strong>KVAC Берлин (21.03.2026)</strong> — "Независимо от типа долгосрочной визы" → H-1 включён. Но "может быть" — финальное решение за инспектором.</div>
-
-  <div class="sec">
-    <div class="sec-t kob">✅ 확정된 사항</div>
-    <div class="sec-t rub">✅ Подтверждено</div>
-    <div class="card">
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">워홀 H-1 = 장기사증 (KVAC 공식 답변)</div><div class="il rub">H-1 = долгосрочная виза (офиц. KVAC)</div><div class="id kob">6개월 이상 독일 체류 + 교제 입증 → 범죄경력증명서(우크라이나·독일·헝가리·캐나다 4개국) + 건강진단서 전부 면제 가능. 최종 심사관 재량.</div><div class="id rub">6+ месяцев + отношения → справки о судимости (4 страны) + медсправка — не нужны. Финальное решение за инспектором.</div></div><span class="tag tb kob">KVAC 확인</span><span class="tag tb rub">KVAC подтв.</span></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">우크라이나 국제결혼 안내프로그램 불필요</div><div class="il rub">Украина не в списке 7 стран</div><div class="id kob">7개국(중·베·필·캄·몽·우즈·태) 미포함 → 프로그램 이수 불필요</div><div class="id rub">Не нужно проходить обязательную программу</div></div><span class="tag tg kob">확정</span><span class="tag tg rub">Подтв.</span></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">한국어 능력 — 영어 소통으로 면제 가능</div><div class="il rub">Корейский — освобождение через английский</div><div class="id kob">초청장에 "영어로 의사소통 가능" 기재 + 영어 메신저 기록 첨부 → TOPIK 면제 가능. 심사관 확인 필요.</div><div class="id rub">В приглашении указать + скриншоты переписки на английском → TOPIK не нужен. Подтвердить у инспектора.</div></div><span class="tag ty kob">면제 가능</span><span class="tag ty rub">Возможно</span></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">F-6 취업 제한 없음 + 2년 후 영주권</div><div class="il rub">F-6 — работа сразу + ПМЖ через 2 года</div><div class="id kob">입국 즉시 취업 가능 / F-6 2년 이상 체류 후 영주권(F-5) 신청 가능</div><div class="id rub">Работать сразу / 2+ лет → заявка на ПМЖ (F-5)</div></div><span class="tag tg kob">확정</span><span class="tag tg rub">Подтв.</span></div>
+  <!-- 개요 -->
+  <div id="sub-f6-overview" class="subpanel active">
+    <div class="g2">
+      <div class="stat"><div class="sl"><span class="ko">소득기준(2인/2026)</span><span class="ru">Доход(2чел/2026)</span></div><div class="sv" style="color:var(--yellow)">2,520만</div><div class="ss">25,195,752원</div></div>
+      <div class="stat"><div class="sl"><span class="ko">처리기간</span><span class="ru">Срок</span></div><div class="sv" style="color:var(--blue)">장기</div><div class="ss"><span class="ko">일반보다 심사기간 김</span><span class="ru">Дольше обычного</span></div></div>
+    </div>
+    <div class="hb hr kob">⚠️ <strong>중요</strong> — F-6 거절 시 6개월간 재신청 불가 (임신·출산 등 인도적 사유 예외). 서류 완벽하게 준비 필수. 4월 취업 후 행정사 유료 상담 권장.</div>
+    <div class="hb hr rub">⚠️ <strong>Важно</strong> — При отказе повторная подача только через 6 мес. (исключение: беременность, роды и др.). Документы идеально с первого раза. Консультация специалиста после апреля.</div>
+    <div class="hb hg kob">✅ <strong>KVAC 베를린 (2026.03.21)</strong> — "장기사증 종류 상관없이 장기사증이면 면제대상에 해당될 수 있습니다" → 워홀(H-1) 포함. 최종 판단은 심사관 재량.</div>
+    <div class="hb hg rub">✅ <strong>KVAC Берлин (21.03.2026)</strong> — H-1 включён как долгосрочная виза → освобождение возможно. Финальное решение за инспектором.</div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">✅ 확정된 사항</span><span class="ru">✅ Подтверждено</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">워홀 H-1 = 장기사증 → 서류 면제 가능 (KVAC 공식 답변)</div><div class="il rub">H-1 = долгосрочная виза → освобождение (офиц. KVAC)</div><div class="id kob">6개월 이상 독일 체류 + 교제 입증 → 원준이·디아나 양측 범죄경력증명서 + 건강진단서 전부 면제 가능. 최종 심사관 재량.</div><div class="id rub">6+ мес. в Германии + доказательства → справки о судимости и медсправки обеих сторон не нужны. Финальное решение за инспектором.</div></div><span class="tag tb">KVAC</span></div>
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">우크라이나 국제결혼 안내프로그램 불필요</div><div class="il rub">Украина не в списке 7 стран</div><div class="id kob">7개국(중·베·필·캄·몽·우즈·태) 미포함 → 프로그램 이수 불필요</div><div class="id rub">Не нужно проходить обязательную программу</div></div><span class="tag tg"><span class="ko">확정</span><span class="ru">Подтв.</span></span></div>
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">F-6 취업 제한 없음 + 2년 후 영주권</div><div class="il rub">F-6 — работа сразу + ПМЖ через 2 года</div><div class="id kob">입국 즉시 취업 가능 / 2년 이상 체류 후 영주권(F-5) 신청 가능</div><div class="id rub">Работать сразу / 2+ лет → заявка на ПМЖ (F-5)</div></div><span class="tag tg"><span class="ko">확정</span><span class="ru">Подтв.</span></span></div>
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">§24 자동 연장 확인</div><div class="il rub">§24 автопродление подтверждено</div><div class="id kob">2026년 2월 1일 기준 유효한 §24 체류허가는 자동으로 2027년 3월 4일까지 연장. 별도 신청 불필요.</div><div class="id rub">Разрешения §24, действительные на 1 февраля 2026, автоматически продлены до 4 марта 2027.</div></div><span class="tag tg"><span class="ko">확인됨</span><span class="ru">Подтв.</span></span></div>
+      </div>
     </div>
   </div>
 
-  <div class="sec">
-    <div class="sec-t kob">⚠️ 현재 문제점</div>
-    <div class="sec-t rub">⚠️ Текущие проблемы</div>
-    <div class="card">
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">현재 단독 세대주 → 부모님 집 합가 예정</div><div class="il rub">Отдельный домохозяин → перерегистрация запланирована</div><div class="id kob">대전 자취방 단독 세대주 / 부모님 소득 합산하려면 같은 세대 등재 필요 → 정부24 전입신고 예정</div><div class="id rub">Перерегистрация к родителям через gov.kr запланирована</div></div><span class="tag tb kob">처리 예정</span><span class="tag tb rub">Запланировано</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">2026년 소득 단독 미달 → 부모님 소득 합산</div><div class="il rub">Доход 2026 недостаточен → суммировать с родителями</div><div class="id kob">4월 취업 시 올해 연 2,520만원 미달 / 4인 가구 기준 3,660만원 → 부모님 소득금액증명원 확인 필요 (본인 직접 발급)</div><div class="id rub">С апреля доход ниже 25.2M / 4 чел. нужно 36.6M → родители сами получают справку о доходах</div></div><span class="tag ty kob">해결책 있음</span><span class="tag ty rub">Решаемо</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">일산 이사 후 전입신고 딜레마</div><div class="il rub">Дилемма с пропиской в Ильсане</div><div class="id kob">전입신고 = 세대분리 = 부모님 소득 합산 불가 / 보증금 소액(500~1,000만원) 월세 + 전입신고 생략으로 해결 / 결혼 후 기혼자가 전입신고하면 자동 세대분리됨</div><div class="id rub">Регистрация = разделение = нельзя суммировать / маленький залог + без регистрации / после свадьбы регистрация = автоматическое разделение</div></div><span class="tag ty kob">전입신고 자제</span><span class="tag ty rub">Не регистрироваться</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">연장 시 소득 증명 (입국 후 90일 이내)</div><div class="il rub">Подтверждение дохода при продлении (90 дней)</div><div class="id kob">입국 후 90일 이내 외국인등록 + 체류기간 연장 신청 필수 / 하이코리아(hi.go.kr) 사전 예약 / 그때도 부모님 소득 합산 사용 가능 (세대 유지 전제)</div><div class="id rub">В 90 дней — регистрация + продление / предзапись Hi Korea / можно снова суммировать доход родителей</div></div><span class="tag ty kob">해결책 있음</span><span class="tag ty rub">Решаемо</span></div>
+  <!-- 소득 요건 -->
+  <div id="sub-f6-income" class="subpanel">
+    <div class="hb hy kob">⚠️ <strong>핵심 원칙</strong> — 소득금액증명원(국세청)은 공통 필수 제출. 소득 부족 시 급여 통장 입금내역서로 보완 가능 여부 KVAC 이메일 확인 중. 재산 환산은 시세 아닌 공시지가 기준. 부채 제외 순자산의 5%만 인정. 모든 소득 서류는 "국내" 소득만 인정.</div>
+    <div class="hb hy rub">⚠️ <strong>Ключевой принцип</strong> — Справка о доходах (налоговая) обязательна. Возможность дополнить банковской выпиской уточняется по email у KVAC. Недвижимость — по кадастровой стоимости. Только чистые активы × 5%. Только доходы внутри Кореи.</div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">📊 2026년 가구별 소득 기준 (KVAC 베를린 공식 확인)</span><span class="ru">📊 Нормы дохода 2026 (офиц. KVAC Берлин)</span></div>
+      <div class="g2">
+        <div class="stat"><div class="sl"><span class="ko">2인 가구 (원준+디아나)</span><span class="ru">2 чел. (Вонджун+Диана)</span></div><div class="sv" style="color:var(--yellow)">2,520만</div><div class="ss">25,195,752원</div></div>
+        <div class="stat"><div class="sl"><span class="ko">3인 가구 (어머니 합산)</span><span class="ru">3 чел. (с мамой)</span></div><div class="sv" style="color:var(--green)">3,215만</div><div class="ss">32,154,216원</div></div>
+      </div>
+      <div class="hb hbu kob">※ 가구원 수 = 원준이 + 디아나 + 주민등록표상 세대를 같이하는 직계가족. 어머니 합산 시 3인 가구 기준 적용. 형제·자매 불포함. 소득 합산은 같은 세대 직계가족만 가능. 2027년 기준은 연 약 150만원 인상 추세 → 3인 기준 약 3,365만원 예상.</div>
+      <div class="hb hbu rub">※ Состав семьи = Вонджун + Диана + прямые родственники по прописке. С мамой → норма 3 чел. Братья/сёстры не включаются. В 2027 ожидается рост ~1.5M вон → 3 чел. ~33.65M вон.</div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">🧮 시나리오별 소득 계산 (월급 220만원 기준)</span><span class="ru">🧮 Сценарии расчёта (зарплата 2.2M)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">시나리오 A — 10월 신청 (소득 부족)</div><div class="il rub">Сценарий A — подача в октябре (недостаточно)</div><div class="id kob">결혼 직후 신청. 원준이 입금내역 5~6개월치 + 어머니 1,460만원 합산해도 3,215만원 미달. 현실적으로 소득 부족.</div><div class="id rub">Сразу после свадьбы. ~5-6 мес. дохода Вонджуна + мама 14.6M → не хватает до 32.15M.</div></div><span class="tag tr"><span class="ko">소득 부족</span><span class="ru">Недостаточно</span></span></div>
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">시나리오 B-1 — 25일 지급 시 12월 25일 이후 신청</div><div class="il rub">Сценарий B-1 — зарплата 25-го, подача после 25 дек.</div><div class="id kob">원준이 입금내역(4월분 약 37만 + 5~12월 220만×8=1,797만원) + 어머니 2025년 소득금액증명원 약 1,460만원 = 합계 약 3,257만원 → 3인 기준 3,215만원 충족 ✅ / 어머니 소득금액증명원 2025년분 정상 제출 가능 / KVAC 확인 필요: 급여 입금내역서 인정 여부 (이메일 발송 완료)</div><div class="id rub">Вонджун (~37万+220万×8=17.97M) + мама 2025 (~14.6M) = ~32.57M → норма ✅ / Справка мамы 2025 — нормально / Уточнить: принимают ли выписку (email отправлен)</div></div><span class="tag tg"><span class="ko">최우선 목표</span><span class="ru">Приоритет</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">시나리오 B-2 — 5일 지급 시 2027년 1월 5일 이후 신청</div><div class="il rub">Сценарий B-2 — зарплата 5-го, подача после 5 янв. 2027</div><div class="id kob">원준이 입금내역(4월분 약 73만 + 5~12월 220만×8=1,833만원) + 어머니 2025년 소득금액증명원 약 1,460만원 = 합계 약 3,293만원 → 충족 ✅ / 단, 1월 신청이므로 어머니 2025년분으로 대체 제출이 KVAC 기준에서 인정되는지 확인 필요 (이메일 발송 완료)</div><div class="id rub">Вонджун (~73万+220万×8=18.33M) + мама 2025 (~14.6M) = ~32.93M → норма ✅ / Но подача в январе → нужно подтверждение замены справки (email отправлен)</div></div><span class="tag ty"><span class="ko">KVAC 답변 대기 중</span><span class="ru">Ждём ответа</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">시나리오 C — 2027년 5월 신청 (원준이 단독)</div><div class="il rub">Сценарий C — май 2027 (Вонджун один)</div><div class="id kob">원준이 2026년 소득금액증명원(5월 1일 발급): 220만×12=2,640만원 → 2인 가구 기준 충족. §24 만료(3월) 이후라 디아나 체류 별도 해결 필요.</div><div class="id rub">Справка Вонджуна 2026 (с 1 мая): 2.2M×12=26.4M → норма 2 чел. ✅. Но §24 истёк (март) — статус Дианы решать отдельно.</div></div><span class="tag ty"><span class="ko">§24 만료 이후</span><span class="ru">После §24</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">🏠 재산 환산 (어머니 아파트)</span><span class="ru">🏠 Конвертация имущества (квартира мамы)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">아파트 시세 약 5억~5억 3천 (어머니 명의)</div><div class="il rub">Рыночная цена ~5–5.3 млрд вон (на маму)</div><div class="id kob">공시지가 기준 (시세 아님, 보통 시세의 60~70%). 대출 잔액 차감 후 순자산의 5%만 인정. 6개월 이상 보유 + 100만원 이상 재산만 인정 (등기부등본 + 공시가격표 제출).</div><div class="id rub">Кадастровая стоимость (~60–70% рыночной). Только чистые активы × 5%. Удерживаемое 6+ мес. и стоимостью 1M+ вон (регистрация + кадастровая таблица).</div></div><span class="tag ty"><span class="ko">공시지가 확인 필요</span><span class="ru">Проверить кадастр</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">대출 잔액 미확인 (풀대출 후 일부 상환)</div><div class="il rub">Остаток кредита неизвестен</div><div class="id kob">최악의 경우(대출 70%) 공시지가 약 3.5억 기준 순자산 약 1억 → 재산 환산 약 500만원. 정확한 수치는 행정사 상담 시 확인 권장.</div><div class="id rub">Худший случай (кредит 70%): кадастр ~350M, чистые активы ~100M → конвертация ~5M вон.</div></div><span class="tag tgr"><span class="ko">나중에 확인</span><span class="ru">Позже</span></span></div>
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">사업소득 주의사항 #3 (KVAC 베를린 공식)</div><div class="il rub">Примечание #3 по доходу от бизнеса (офиц. KVAC)</div><div class="id kob">사업소득자는 신청일 기준 1년 전 소득이 원칙이나, 동일한 사업을 지속하고 있다면 예외 인정 가능 → 어머니(성공타올 5년째 지속)에게 유리. 단, 실태조사 실시될 수 있음.</div><div class="id rub">Для самозанятых нужен доход за 1 год до подачи, но если бизнес продолжается — возможно исключение → для мамы (Сонгон Тауль, 5 лет) выгодно. Но возможна проверка.</div></div><span class="tag tg"><span class="ko">유리한 조항</span><span class="ru">Плюс</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">⚠️ 미확인 사항</span><span class="ru">⚠️ Неподтверждённое</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">급여 통장 입금내역서 소득 입증 인정 여부 (이메일 발송 완료)</div><div class="il rub">Принимают ли банковскую выписку (email отправлен)</div><div class="id kob">원천징수영수증 발급 전 급여 통장 입금내역서(은행 발급)를 소득 보완 서류로 제출 가능한지. KVAC 베를린 답변 대기 중.</div><div class="id rub">Можно ли подать банковскую выписку вместо справки об удержании. Ждём ответа KVAC Берлин.</div></div><span class="tag ty"><span class="ko">답변 대기 중</span><span class="ru">Ждём</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">직계가족 사업소득 소득금액증명원 연도 대체 여부 (이메일 발송 완료)</div><div class="il rub">Замена справки родственника (email отправлен)</div><div class="id kob">2027년 1월 신청 시 어머니 2026년 소득금액증명원이 발급 불가한 경우, 2025년 귀속분으로 대체 제출이 가능한지. KVAC 베를린 답변 대기 중.</div><div class="id rub">При подаче в январе 2027 справка мамы за 2026 недоступна — можно ли подать за 2025? Ждём ответа.</div></div><span class="tag ty"><span class="ko">답변 대기 중</span><span class="ru">Ждём</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">어머니 2025년 소득금액증명원</div><div class="il rub">Справка мамы за 2025</div><div class="id kob">2026년 7월 이후 발급 가능. 2024년 소득(1,460만원)과 비슷하게 나올지가 핵심 변수.</div><div class="id rub">Доступна с июля 2026. Будет ли схожа с 2024 (14.6M)?</div></div><span class="tag ty"><span class="ko">2026년 7월 확인</span><span class="ru">Июль 2026</span></span></div>
+        <div class="item"><div class="dot tr"></div><div class="ic"><div class="il kob">푸른IPS 월급 지급일 확인 필요</div><div class="il rub">Уточнить дату выплаты зарплаты</div><div class="id kob">당월 25일 지급이면 12월 25일 신청 가능 / 익월 5일 지급이면 2027년 1월 5일 이후 신청. 4월 입사 후 바로 확인 필요.</div><div class="id rub">25-го числа → подача 25 дек. / 5-го след. мес. → подача после 5 янв. 2027. Уточнить после апреля.</div></div><span class="tag tr"><span class="ko">4월 입사 후 확인</span><span class="ru">После апреля</span></span></div>
+      </div>
     </div>
   </div>
 
-  <div class="sec">
-    <div class="sec-t kob">💍 혼인신고 절차 (F-6 전제 조건)</div>
-    <div class="sec-t rub">💍 Регистрация брака (обязательное условие)</div>
-    <div class="card">
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">독일 Standesamt에서 법적 혼인</div><div class="il rub">Брак в немецком Standesamt</div><div class="id kob">독일에서 법적으로 결혼 성립 → 혼인증명서 발급</div><div class="id rub">Официальная регистрация брака в Германии → получение свидетельства о браке</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">한국 대사관(베를린)에 혼인신고</div><div class="il rub">Подача в посольство Кореи (Берлин)</div><div class="id kob">독일 혼인증명서 아포스티유 + 한국어 번역 → 베를린 한국 대사관 제출 / 한국 가족관계등록부에 등재되어야 F-6 신청 가능</div><div class="id rub">Апостиль на свидетельство + перевод на корейский → подача в посольство / нужна запись в корейский реестр семьи</div></div><span class="tag ty kob">필수 선행</span><span class="tag ty rub">Обязательно</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">우크라이나 혼인신고 — 전쟁으로 어려움</div><div class="il rub">Регистрация в Украине — сложно из-за войны</div><div class="id kob">우크라이나 영사관(독일)을 통해 신고 필요 / 전쟁 중 서류 발급 지연 가능 / 한국 대사관 신고가 F-6 신청에 더 중요</div><div class="id rub">Через украинское консульство в Германии / возможны задержки из-за войны / регистрация в Корее важнее для F-6</div></div><span class="tag ty kob">주의</span><span class="tag ty rub">Внимание</span></div>
+  <!-- 의사소통 -->
+  <div id="sub-f6-comms" class="subpanel">
+    <div class="hb hg kob">✅ <strong>결론</strong> — 디아나는 영어 능력 충분(캐나다 1년 반 취업 이력, 인터뷰 통과 가능). 원준이가 영어 능력을 입증해야 하는 게 핵심. 토익 795점 보유.</div>
+    <div class="hb hg rub">✅ <strong>Вывод</strong> — Диана — английский отличный (1.5 года в Канаде). Вонджун должен подтвердить свой английский. TOEIC 795 баллов есть.</div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">📋 KVAC 베를린 의사소통 서류 목록 (2026.02.17 공식)</span><span class="ru">📋 Документы KVAC Берлин (офиц. 17.02.2026)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">한국어 루트 (3-1~3-6번) — 해당 없음</div><div class="il rub">Корейский язык (3-1~3-6) — не применимо</div><div class="id kob">한국교육원 2단계(120시간) / TOPIK 1급 이상 / 지정 한국어 교육기관 이수증 / 한국어 관련 학위 / 외국국적동포 입증서류 / 외국인 배우자 한국 1년 이상 체류 입증서류</div><div class="id rub">Корейский культурный центр 2 этап / TOPIK 1+ / Аккредитованные курсы / Степень по корейскому / Документы этнических корейцев / Пребывание Дианы в Корее 1+ лет</div></div><span class="tag tgr"><span class="ko">해당 없음</span><span class="ru">Н/П</span></span></div>
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">영어(제3국 언어) — 3-10번 + 주석 #2</div><div class="il rub">Английский (3-й язык) — 3-10 + примечание #2</div><div class="id kob">① 일정 수준 이상의 해당 언어 능력시험 점수 제출 또는 ② 대사관에서 해당 언어로 실시하는 인터뷰에 합격 시 의사소통 요건 충족. 인터뷰는 디아나가 KVAC 베를린에서 진행.</div><div class="id rub">① Языковой тест на нужный уровень ИЛИ ② интервью в посольстве на этом языке → требование выполнено. Интервью проходит Диана в KVAC Берлин.</div></div><span class="tag tg"><span class="ko">적용 가능</span><span class="ru">Применимо</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">🎯 원준이 영어 능력 입증 방법</span><span class="ru">🎯 Как Вонджун подтверждает английский</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">토익 795점 보유</div><div class="il rub">TOEIC 795 баллов</div><div class="id kob">영어 능력시험 점수로 제출 가능. KVAC 베를린 기준 점수 명시 안 됨 → 795점 기준 충족 여부 이메일 확인 필요.</div><div class="id rub">Можно подать как балл теста. Минимальный балл KVAC не указан → уточняется по email.</div></div><span class="tag ty"><span class="ko">확인 필요</span><span class="ru">Уточнить</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">OPIc IH 준비 중</div><div class="il rub">OPIc IH — готовится</div><div class="id kob">스피킹 중심이라 의사소통 입증에 더 직접적. 합격 시 추가 서류로 활용 가능.</div><div class="id rub">Тест на говорение — более прямое доказательство. При сдаче — дополнительный документ.</div></div><span class="tag ty"><span class="ko">준비 중</span><span class="ru">В процессе</span></span></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">헬로톡 영어 대화 내역 + 초청장 기재</div><div class="il rub">Переписка в HelloTalk + указание в приглашении</div><div class="id kob">초청장에 "영어로 의사소통 가능" 명시 + 헬로톡 대화 내역 첨부. 시험 점수와 함께 제출 시 보완 효과.</div><div class="id rub">В приглашении указать + скриншоты переписки. Усиливает вместе с баллом теста.</div></div><span class="tag tb"><span class="ko">보완 자료</span><span class="ru">Доп. документ</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">📧 이메일 문의 현황 (kvacdeinfo@iom.int)</span><span class="ru">📧 Статус запросов по email</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">영어 의사소통 입증 시 구체적 기준 점수</div><div class="il rub">Минимальный балл для английского</div><div class="id kob">토익 795점이 기준 충족인지, 어떤 시험·점수 기준인지 확인. 발송 완료, 답변 대기 중.</div><div class="id rub">Достаточно ли TOEIC 795? Email отправлен, ждём ответа.</div></div><span class="tag ty"><span class="ko">답변 대기 중</span><span class="ru">Ждём</span></span></div>
+      </div>
     </div>
   </div>
 
-  <div class="sec">
-    <div class="sec-t kob">💰 소득 요건 상세</div>
-    <div class="sec-t rub">💰 Требования к доходу</div>
-    <div class="card">
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2인 가구: 연 25,195,752원 (월 210만원)</div><div class="il rub">2 чел.: 25,195,752 вон/год (210万/мес.)</div><div class="id kob">월급 210 이상이면 단독 충족 / 9급 공무원 수당 포함 월 286만원으로도 충족</div><div class="id rub">Зарплата от 2.1M/мес = самостоятельно выполнено</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">4인 가구 (부모님 합산): 연 3,660만원</div><div class="il rub">4 чел. (с родителями): 36,600,000 вон/год</div><div class="id kob">부모님과 같은 세대 등재 시 / 소득금액증명원은 본인 직접 발급만 가능 / 매출≠소득, 순소득(신고소득) 기준</div><div class="id rub">При совместной регистрации / справку получает только сам владелец / выручка ≠ доход, только задекларированный</div></div><span class="tag ty kob">확인 필요</span><span class="tag ty rub">Проверить</span></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">디아나 한국 취업 시 소득 합산 가능</div><div class="il rub">Доход Дианы в Корее суммируется</div><div class="id kob">F-6 입국 후 디아나가 한국에서 취업하면 그 소득 합산 가능 → 2차 연장부터 유리</div><div class="id rub">После въезда Дианы, её корейский доход суммируется → выгодно при продлениях</div></div><span class="tag tg kob">유리</span><span class="tag tg rub">Плюс</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">⚠️ "혼인 후 1년 해외 동거 소득면제" — 현 상황에서 사용 불가</div><div class="il rub">⚠️ "1 год совместной жизни за рубежом" — в текущей ситуации не применимо</div><div class="id kob">§24가 2027년 3월 만료인데, 2026년 10월 결혼 후 1년이면 2027년 10월 → §24 만료(3월) 이후라 이 조건 사용 불가. §24 연장되지 않으면 디아나가 독일에 계속 체류할 수 없음.</div><div class="id rub">§24 истекает март 2027, свадьба октябрь 2026 → 1 год = октябрь 2027, что ПОСЛЕ истечения §24. Значит Диана не сможет оставаться в Германии весь год.</div></div><span class="tag tr kob">사용 불가</span><span class="tag tr rub">Неприменимо</span></div>
+  <!-- 타이밍 -->
+  <div id="sub-f6-timing" class="subpanel">
+    <div class="hb hr kob">🔴 <strong>핵심 문제</strong> — §24 만료(2027년 3월) 전 입국 완료가 목표인데, 소득금액증명원 발급 타이밍과 충돌함. 월급 지급일에 따라 신청 가능 시점이 달라짐.</div>
+    <div class="hb hr rub">🔴 <strong>Проблема</strong> — Цель — въезд до §24 (март 2027), конфликт со сроками справки о доходах. Дата подачи зависит от даты выплаты зарплаты.</div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">📊 소득금액증명원 발급 가능 시점</span><span class="ru">📊 Когда доступна справка о доходах</span></div>
+      <div class="card">
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">원준이 (근로소득자) — 2027년 5월 1일부터</div><div class="il rub">Вонджун (наёмный) — с 1 мая 2027</div><div class="id kob">2026년 귀속 소득금액증명원 발급 가능.</div><div class="id rub">Справка за 2026 становится доступна.</div></div><span class="tag tb"><span class="ko">5월 1일부터</span><span class="ru">с 1 мая</span></span></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">어머니 (사업소득자, 성공타올) — 2027년 7월 1일부터</div><div class="il rub">Мама (самозанятая, Сонгон Тауль) — с 1 июля 2027</div><div class="id kob">종합소득세 신고(5월) 후 7월부터 2026년 귀속 소득금액증명원 발급 가능.</div><div class="id rub">После налоговой декларации (май) с июля доступна справка за 2026.</div></div><span class="tag tb"><span class="ko">7월 1일부터</span><span class="ru">с 1 июля</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">⚡ 신청 시점별 비교 (월급 220만원 기준)</span><span class="ru">⚡ Сравнение сроков подачи (зарплата 2.2M)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">케이스 1 — 25일 지급: 2026년 12월 25일 이후 신청 가능</div><div class="il rub">Случай 1 — зарплата 25-го: подача после 25 дек. 2026</div><div class="id kob">원준이 입금내역(4월~12월 25일): ~37만 + 220만×8 = 1,797만원 / 어머니 2025년 소득: ~1,460만원 / 합계 3,257만원 → 기준 3,215만원 충족 ✅ / 어머니 소득금액증명원 2025년분 정상 제출 / KVAC 확인 필요: 급여 입금내역서 인정 여부 / 심사 2~4주 → 2027년 1~2월 입국 예상</div><div class="id rub">Вонджун (~37万+220万×8=17.97M) + мама 2025 (~14.6M) = ~32.57M → норма ✅ / Справка мамы 2025 нормально / Уточнить выписку / Рассмотрение 2–4 нед. → въезд янв-фев 2027</div></div><span class="tag tg"><span class="ko">최우선 목표</span><span class="ru">Приоритет</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">케이스 2 — 5일 지급: 2027년 1월 5일 이후 신청 가능</div><div class="il rub">Случай 2 — зарплата 5-го: подача после 5 янв. 2027</div><div class="id kob">원준이 입금내역(4월~1월 5일): ~73만 + 220만×8 = 1,833만원 / 어머니 2025년 소득: ~1,460만원 / 합계 3,293만원 → 충족 ✅ / 단, 1월 신청이므로 어머니 2025년분 대체 인정 여부 KVAC 확인 필요 (이메일 발송 완료) / 심사 2~4주 → 2월 중 발급 → §24 만료(3월) 전 입국 가능하나 타이트</div><div class="id rub">Вонджун (~73万+220万×8=18.33M) + мама 2025 (~14.6M) = ~32.93M → норма ✅ / Замена справки мамы уточняется (email отправлен) / Рассмотрение 2–4 нед. → февраль → до §24 (март) возможно, но тесно</div></div><span class="tag ty"><span class="ko">KVAC 답변 대기</span><span class="ru">Ждём ответа</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">케이스 3 — 2027년 5월 (원준이 단독)</div><div class="il rub">Случай 3 — май 2027 (Вонджун один)</div><div class="id kob">원준이 2026년 소득금액증명원(5월 1일 발급): 220만×12=2,640만원 → 2인 가구 기준 충족. §24 만료(3월) 이후라 디아나 체류 별도 해결 필요.</div><div class="id rub">Справка 2026 (с 1 мая): 2.2M×12=26.4M → 2 чел. ✅. Но §24 истёк (март) — статус Дианы решать отдельно.</div></div><span class="tag ty"><span class="ko">§24 만료 이후</span><span class="ru">После §24</span></span></div>
+        <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">케이스 4 — 2027년 7월 이후 (불가)</div><div class="il rub">Случай 4 — после июля 2027 (нереально)</div><div class="id kob">어머니 2026년 소득금액증명원 사용 가능하나 §24 만료(3월) 후 4개월. 현실적으로 불가.</div><div class="id rub">Справка мамы за 2026 доступна, но §24 истёк 4 мес. назад. Нереально.</div></div><span class="tag tr"><span class="ko">불가</span><span class="ru">Нереально</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">🗓️ 전체 타임라인</span><span class="ru">🗓️ Общий таймлайн</span></div>
+      <div class="card">
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 3월 (지금)</div><div class="il rub">Март 2026 (сейчас)</div><div class="id kob">KVAC 베를린 이메일 문의 발송 완료 / 법무부 1345 전화 문의</div><div class="id rub">Email в KVAC Берлин отправлен / звонок в Минюст 1345</div></div><span class="tag tb"><span class="ko">완료</span><span class="ru">Готово</span></span></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 4월</div><div class="il rub">Апрель 2026</div><div class="id kob">푸른IPS 취업 시작 (4월 21일) / 월급 220만원 협의 / 월급 지급일 확인 필수 (25일 vs 익월 5일) / 행정사 유료 상담</div><div class="id rub">Трудоустройство (21 апр.) / зарплата 2.2M / уточнить дату выплаты / консультация специалиста</div></div></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 7월</div><div class="il rub">Июль 2026</div><div class="id kob">어머니 2025년 소득금액증명원 발급 → 소득 확인 후 신청 시점 최종 결정</div><div class="id rub">Справка мамы за 2025 → проверить → финальное решение по срокам</div></div><span class="tag ty"><span class="ko">소득 확인 시점</span><span class="ru">Проверка дохода</span></span></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 10월</div><div class="il rub">Октябрь 2026</div><div class="id kob">독일 Standesamt 결혼 → 베를린 한국 대사관 혼인신고 → 서류 준비 완료 후 F-6 비자 신청</div><div class="id rub">Свадьба в Standesamt → регистрация в посольстве Кореи → подача на F-6</div></div></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 12월 25일 또는 2027년 1월 5일 (신청 목표)</div><div class="il rub">25 дек. 2026 или 5 янв. 2027 (цель подачи)</div><div class="id kob">월급 지급일에 따라 결정. 심사 2~4주 → 2027년 1~2월 중 발급 예상 → §24 만료(3월 4일) 전 입국 목표.</div><div class="id rub">Зависит от даты выплаты. Рассмотрение 2–4 нед. → выдача янв-фев 2027 → въезд до §24 (4 марта).</div></div></div>
+        <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">2027년 3월 4일 — §24 만료 데드라인</div><div class="il rub">4 марта 2027 — дедлайн §24</div><div class="id kob">이 전 입국 완료 목표. 늦어질 경우 독일 이민국에 다른 체류허가 신청해두면 심사 중 합법 체류 유지 가능.</div><div class="id rub">Въезд до этой даты. При задержке — подать другое разрешение в немецкое ведомство для легального статуса во время рассмотрения.</div></div><span class="tag tr"><span class="ko">데드라인</span><span class="ru">Дедлайн</span></span></div>
+        <div class="item"><div class="dot dgr"></div><div class="ic"><div class="il kob">2028년 이후</div><div class="il rub">С 2028</div><div class="id kob">F-6 2년 이상 체류 → 영주권(F-5) 신청 자격 발생</div><div class="id rub">2+ лет по F-6 → можно подать на ПМЖ (F-5)</div></div></div>
+      </div>
     </div>
   </div>
 
-  <div class="sec">
-    <div class="sec-t kob">📋 준비 서류</div>
-    <div class="sec-t rub">📋 Документы</div>
-    <div class="card">
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">초청인(나원준) 서류</div><div class="il rub">Приглашающий (Вонджун)</div><div class="id kob">기본증명서(상세) · 혼인관계증명서(상세) · 가족관계증명서(상세) · 주민등록등본 · 소득금액증명원 · 원천징수영수증 · 재직증명서 · 급여명세서 · 통장거래내역서 · 신용정보조회서 · 초청장 · 혼인배경진술서 · 여권사본 · 주거 입증서류(임대차계약서 또는 등기부등본)</div><div class="id rub">Семейные документы · регистрация · справки о доходах · справка с работы · выписка · кредитная история · письмо-приглашение · подтверждение жилья</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">피초청인(디아나) 서류</div><div class="il rub">Приглашаемая (Диана)</div><div class="id kob">여권 원본 · 비자 신청서 · 사진 · 혼인관계증명서(독일 발급, 아포스티유) / 워홀 6개월 조건 충족 시 범죄경력증명서·건강진단서 전부 면제</div><div class="id rub">Паспорт · анкета · фото · свидетельство о браке (с апостилем) / справки — освобождение при H-1 6+ мес.</div></div></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">한국어 능력 — 영어 소통으로 면제 신청</div><div class="il rub">Корейский — заявить освобождение через английский</div><div class="id kob">초청장에 "영어로 의사소통 가능" 기재 + 영어 메신저 기록 첨부 → TOPIK 불필요</div><div class="id rub">В приглашении указать + скриншоты переписки на английском</div></div><span class="tag tg kob">면제 신청</span><span class="tag tg rub">Заявить</span></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">교제 입증 자료</div><div class="il rub">Доказательства отношений</div><div class="id kob">영어 메신저 기록 · 사진 · 출입국 기록 · 공동 생활비 영수증 · 인우보증서 · 초청장 내 교제경위 상세 기재</div><div class="id rub">Переписка на английском · фото · въезд/выезд · совместные расходы · поручительство</div></div></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">주거 입증 필수 (신규 추가)</div><div class="il rub">Подтверждение жилья (обязательно)</div><div class="id kob">한국인 배우자 또는 직계가족 명의의 정상적인 주거공간 입증 필요 / 임대차계약서 또는 부동산 등기부등본 제출 / 부모님 명의 계약도 가능</div><div class="id rub">Нужно подтвердить нормальное жильё на имя корейского супруга или его прямых родственников / договор аренды или свидетельство о праве собственности</div></div><span class="tag ty kob">빠지기 쉬운 서류</span><span class="tag ty rub">Легко забыть</span></div>
+  <!-- 서류 -->
+  <div id="sub-f6-docs" class="subpanel">
+    <div class="hb hy kob">⚠️ <strong>서류 유의사항 (KVAC 베를린 2026.02.17 기준)</strong> — 한국에서 발행되는 모든 서류는 국문 3개월 이내 원본만 제출 가능. 반드시 '상세', 주민등록번호 '모두 표기'로 제출. 열람용 제출 불가. 제출 불가 서류는 사유서(자유양식)로 대체 가능.</div>
+    <div class="hb hy rub">⚠️ <strong>Важно (KVAC Берлин 17.02.2026)</strong> — Все корейские документы: только оригинал, не старше 3 месяцев, с полным номером резидента. Электронный просмотр не принимается. При невозможности подачи документа — объяснительная записка в свободной форме.</div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">1. 기본 서류 (1-1~1-18번)</span><span class="ru">1. Основные документы (1-1~1-18)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">공통 기본 서류</div><div class="il rub">Общие базовые документы</div><div class="id kob">사증발급신청서 (1-1) · 여권용 사진 1매 (1-2) · 신청인(디아나) 여권 원본 (잔여 6개월 이상) (1-3) · 신청인 여권 사본 1부 (1-4) · 비자 신청 수수료 (1-5) · KVAC 송금내역서 · 우편접수 시 책임면책서 · KVAC 이용약관 동의서</div><div class="id rub">Анкета (1-1) · фото (1-2) · паспорт Дианы оригинал (6+ мес.) (1-3) · копия паспорта (1-4) · сбор (1-5) · квитанция об оплате · отказ от ответственности при почте · согласие с условиями KVAC</div></div></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">작성 서류 (정해진 양식, 가장 중요)</div><div class="il rub">Заполняемые документы (самые важные)</div><div class="id kob">외국인 배우자 초청장 (한국인 원준이가 한글로 작성) (1-6) · 신원보증서 (원준이 작성) (1-7) · 외국인 배우자의 결혼배경진술서 (디아나가 영어로 작성) (1-8) / 양식: 하이코리아(hikorea.go.kr)</div><div class="id rub">Приглашение (Вонджун пишет на корейском) (1-6) · поручительство (Вонджун) (1-7) · заявление об обстоятельствах знакомства (Диана на английском) (1-8) / Форма: hikorea.go.kr</div></div><span class="tag tr"><span class="ko">양식 필수 사용</span><span class="ru">Обязат. форма</span></span></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">한국인 배우자(원준이) 기본 서류</div><div class="il rub">Документы корейского супруга (Вонджун)</div><div class="id kob">여권 사본 1부 (1-9) · 기본증명서(상세) (1-10) · 혼인관계증명서(상세) (1-11) · 가족관계증명서(상세) (1-12) · 주민등록등본 원본 (1-13) · 건강진단서 원본 (1-14, 면제 조건 #2 해당 시 면제 가능) / 모두 발급 3개월 이내</div><div class="id rub">Копия паспорта (1-9) · справка о регистрации семьи подробная (1-10, 1-11, 1-12) · выписка из реестра населения (1-13) · медсправка (1-14, при условии #2 — не нужна) / Все не старше 3 мес.</div></div></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">외국인 배우자(디아나) 기본 서류</div><div class="il rub">Документы иностранного супруга (Диана)</div><div class="id kob">결혼증명서 원본 (필요한 경우에 한함) (1-15) · 범죄경력증명서 원본 (1-16, 면제 조건 해당 시 면제) · 건강진단서 원본 (1-17, 면제 조건 해당 시 면제) · 해당 국가 특별 적용 서류 (1-18)</div><div class="id rub">Свидетельство о браке (при необходимости) (1-15) · справка о судимости (1-16, при освобождении не нужна) · медсправка (1-17, при освобождении не нужна) · особые документы страны (1-18)</div></div></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">2. 건강진단서 및 범죄경력증명서 면제 조건</span><span class="ru">2. Условия освобождения от медсправки и справки о судимости</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">양측 모두 면제 조건 (초청인+신청자)</div><div class="il rub">Освобождение обеих сторон</div><div class="id kob">① 초청인(원준이)이 외국인 배우자 국가에서 6개월 이상 체류하거나 제3국에서 장기사증으로 계속 체류하면서 교제한 사람 (워홀 H-1 해당) ② 국내에서 외국인 배우자가 91일 이상 합법 체류하며 교제한 사람 ③ 임신·출산 등 인도적 고려가 필요한 사람</div><div class="id rub">① Вонджун 6+ мес. в стране Дианы или по долгосрочной визе в 3-й стране (H-1 подходит) ② Диана 91+ дней легально в Корее ③ беременность, роды и др.</div></div><span class="tag tg"><span class="ko">워홀 시 해당</span><span class="ru">При H-1</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">결핵진단서 — 조건부 필수 (면제 불가 아님)</div><div class="il rub">Справка на туберкулёз — условно обязательна</div><div class="id kob">우크라이나는 결핵 고위험 35개국 포함. 단, "지난 6개월 이내 우크라이나 방문한 경우"에만 제출 의무. 전쟁 중 방문하지 않았다면 → 지난 6개월간 독일에 계속 체류했음을 증명하는 서류 자유양식으로 대체 가능. 지정 병원 없음.</div><div class="id rub">Украина в списке 35 стран. НО: справка нужна только если Диана посещала Украину за последние 6 мес. Если нет → свободная форма о непрерывном пребывании в Германии. Больница любая.</div></div><span class="tag ty"><span class="ko">6개월 내 방문 여부 확인</span><span class="ru">Проверить визит</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">3. 소득요건 관련 서류 (2-1~2-11번)</span><span class="ru">3. Документы по доходу (2-1~2-11)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">공통 필수 (2-1, 2-2)</div><div class="il rub">Обязательно всегда</div><div class="id kob">소득금액증명원 원본 (2-1, 국세청 홈택스 또는 세무서) · 신용정보조회서 1부 (2-2, 한국신용정보원)</div><div class="id rub">Справка о доходах оригинал (2-1, налоговая) · кредитная история (2-2, кредитное бюро)</div></div><span class="tag tr"><span class="ko">필수</span><span class="ru">Обяз.</span></span></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">근로소득 활용 시 (2-3~2-6)</div><div class="il rub">При трудовом доходе (2-3~2-6)</div><div class="id kob">근로소득 원천징수부 (2-3) · 재직증명서 현 또는 과거 근무지 (2-4) · 사업자등록증 사본 (2-5, 회사 사업자) · 소득입증서류 선택사항 (2-6, 소득요건 충족 못할 경우 보완 서류)</div><div class="id rub">Справка об удержании налогов (2-3) · справка с места работы (2-4) · свидетельство о регистрации компании (2-5) · доп. документы по доходу (2-6, если не хватает)</div></div></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">사업소득 활용 시 (2-7~2-8) / 재산 활용 시 (2-10~2-11)</div><div class="il rub">Доход от бизнеса (2-7~2-8) / Имущество (2-10~2-11)</div><div class="id kob">사업자등록증 사본 (2-7, 농림수산업 제외) · 소득입증서류 선택사항 (2-8) / 예금·보험·증권·채권 (2-10, 100만원 이상 6개월 이상 지속된 것만) · 부동산 (2-11, 등기부등본 + 공시가격표)</div><div class="id rub">Свидетельство о регистрации бизнеса (2-7) · доп. документы (2-8) / Вклады, страховки, ценные бумаги (2-10, 1M+ и 6+ мес.) · Недвижимость (2-11, регистрация + кадастровая таблица)</div></div></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">4. 주거요건 관련 서류 (4-1~4-3번)</span><span class="ru">4. Документы о жилье (4-1~4-3)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">자가인 경우 (4-1)</div><div class="il rub">Собственность (4-1)</div><div class="id kob">등기부등본 1부 (말소사항 전부 포함, 주민등록번호 전체 포함)</div><div class="id rub">Свидетельство о праве собственности (с полными данными, включая номер резидента)</div></div></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">임대인 경우 (4-2~4-3) — 두 가지 모두 제출</div><div class="il rub">Аренда (4-2~4-3) — оба документа обязательны</div><div class="id kob">등기부등본 1부 (말소사항 전부 포함) + 임대차계약서 사본 1부. "또는"이 아니라 두 개 다 제출해야 함.</div><div class="id rub">Свидетельство о собственности + договор аренды (копия). Нужны ОБА документа, не один из двух.</div></div><span class="tag tr"><span class="ko">둘 다 필수</span><span class="ru">Оба обяз.</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">주거요건 주의사항</div><div class="il rub">Важно о жилье</div><div class="id kob">주거지 주소는 주민등록등본(1-13)상의 주소와 동일해야 함. 한국인 배우자 또는 직계가족, 형제, 자매 명의로 소유 또는 임차한 곳이어야 함. 제3자 명의 원칙적 불가 (회사 사택 등 예외).</div><div class="id rub">Адрес жилья должен совпадать с пропиской (1-13). Жильё должно быть на имя корейского супруга, прямых родственников, братьев или сестёр. Третьи лица — принципиально нельзя (кроме служебного жилья).</div></div><span class="tag ty"><span class="ko">주소 일치 필수</span><span class="ru">Адреса должны совпадать</span></span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">5. 교제 입증 서류 (5-1~5-3번)</span><span class="ru">5. Доказательства отношений (5-1~5-3)</span></div>
+      <div class="card">
+        <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">공통 필수 (5-1)</div><div class="il rub">Обязательно (5-1)</div><div class="id kob">교제 경위·혼인의 진정성을 입증할 수 있는 서류: 교제 사진·가족 사진·헬로톡 SNS 대화 내역 등을 자유롭게 A4 용지에 편집하여 5쪽 이내 제출.</div><div class="id rub">Документы, подтверждающие историю отношений: фото пары, семейные фото, переписка в HelloTalk — свободно оформить на А4, до 5 страниц.</div></div><span class="tag tr"><span class="ko">필수</span><span class="ru">Обяз.</span></span></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">지인 소개로 만난 경우 (5-3)</div><div class="il rub">Знакомство через друга (5-3)</div><div class="id kob">소개자 신분증 사본. 헬로톡 앱에서 만난 경우는 5-3번 해당 없음 → 5-1번만 제출.</div><div class="id rub">Копия удостоверения знакомого. HelloTalk = 5-3 не нужен → только 5-1.</div></div><span class="tag tgr"><span class="ko">해당 없음</span><span class="ru">Н/П</span></span></div>
+      </div>
     </div>
   </div>
 
-  <div class="sec">
-    <div class="sec-t kob">🗓️ 플랜 타임라인</div>
-    <div class="sec-t rub">🗓️ Таймлайн</div>
-    <div class="card">
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">지금 당장</div><div class="il rub">Прямо сейчас</div><div class="id kob">① 부모님 집으로 전입신고 합가 (정부24) ② 부모님 소득금액증명원 직접 발급 ③ 아하 행정사 무료상담 진행 중</div><div class="id rub">① Перерегистрация к родителям ② Справка о доходах родителей ③ Консультация специалиста</div></div><span class="tag tb kob">처리 예정</span><span class="tag tb rub">Запланировано</span></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 4월</div><div class="il rub">Апрель 2026</div><div class="id kob">푸른IPS 취업 (근로계약서에 행정업무 명시) / 월급 210 확정 시 단독 소득요건 충족</div><div class="id rub">Трудоустройство в Pureun IPS / зарплата 2.1M+ = требование выполнено</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 10월</div><div class="il rub">Октябрь 2026</div><div class="id kob">독일 Standesamt 결혼 → 베를린 한국 대사관 혼인신고 → F-6 비자 신청 (kvacdeinfo@iom.int)</div><div class="id rub">Свадьба в Standesamt → регистрация в посольстве Кореи → подача на F-6</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">2026년 11~12월</div><div class="il rub">Ноябрь–Декабрь 2026</div><div class="id kob">디아나 한국 입국 (§24 만료 2027년 3월 전) → 90일 이내 외국인등록 + 체류기간 연장 / 하이코리아 사전 예약 필수</div><div class="id rub">Диана въезжает (до истечения §24 март 2027) → в 90 дней: регистрация + продление / предзапись Hi Korea</div></div></div>
-      <div class="item"><div class="dot dgr"></div><div class="ic"><div class="il kob">2028년 이후</div><div class="il rub">С 2028 г.</div><div class="id kob">F-6 2년 이상 체류 → 영주권(F-5) 신청 자격 발생</div><div class="id rub">2+ лет по F-6 → можно подать на ПМЖ (F-5)</div></div></div>
+  <!-- 혼인신고 -->
+  <div id="sub-f6-marriage" class="subpanel">
+    <div class="hb hr kob">⚠️ <strong>중요</strong> — KVAC 베를린 공식 문서: "필수 혼인 신고서는 국내(한국) 혼인 신고서만 인정됩니다." 독일 Standesamt 결혼 후 반드시 한국 가족관계등록부에 등재되어야 F-6 신청 가능.</div>
+    <div class="hb hr rub">⚠️ <strong>Важно</strong> — Официально KVAC Берлин: "Принимается только корейская регистрация брака". После немецкого Standesamt обязательно внесение в корейский реестр семьи для подачи F-6.</div>
+    <div class="sec">
+      <div class="sec-t"><span class="ko">💍 혼인신고 절차</span><span class="ru">💍 Порядок регистрации брака</span></div>
+      <div class="card">
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">① 독일 Standesamt에서 법적 혼인</div><div class="il rub">① Брак в немецком Standesamt</div><div class="id kob">독일에서 법적으로 결혼 성립 → 혼인증명서 발급 (아포스티유 + 한국어 번역 필요)</div><div class="id rub">Официальная регистрация в Германии → свидетельство о браке (нужны апостиль + перевод на корейский)</div></div></div>
+        <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">② 베를린 한국 대사관에 혼인신고</div><div class="il rub">② Подача в посольство Кореи в Берлине</div><div class="id kob">독일 혼인증명서 아포스티유 + 한국어 번역 → 베를린 한국 대사관 제출 → 한국 가족관계등록부 등재 완료 → F-6 신청 가능</div><div class="id rub">Апостиль на свидетельство + перевод → посольство Кореи в Берлине → запись в корейский реестр → можно подавать F-6</div></div><span class="tag ty"><span class="ko">필수 선행</span><span class="ru">Обяз. сначала</span></span></div>
+        <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">③ 우크라이나 혼인신고 — 전쟁으로 어려움</div><div class="il rub">③ Регистрация в Украине — сложно из-за войны</div><div class="id kob">우크라이나 영사관(독일)을 통해 신고 가능. 전쟁 중 서류 발급 지연 가능. 한국 대사관 신고가 F-6에 더 중요.</div><div class="id rub">Через украинское консульство в Германии. Возможны задержки. Регистрация в Корее важнее для F-6.</div></div><span class="tag ty"><span class="ko">주의</span><span class="ru">Внимание</span></span></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- C-3 -->
+<!-- ===== C-3 ===== -->
 <div id="panel-c3" class="panel">
   <div class="ph">
     <span class="badge b-yellow">C-3</span>
     <span class="ph-title kob">단기방문 관광비자</span>
     <span class="ph-title rub">Краткосрочная туристическая виза</span>
-    <span class="ph-status s-warn kob">리스크 있음</span>
-    <span class="ph-status s-warn rub">Есть риски</span>
+    <span class="ph-status s-warn"><span class="ko">리스크 있음</span><span class="ru">Есть риски</span></span>
   </div>
-
-  <div class="hb hy kob">⚠️ <strong>핵심 상황</strong> — 우크라이나 국적 + §24 임시보호 조합이 심사관에게 불법체류 위험 신호로 읽힐 수 있음. 독일 기숙사 실거주지 있고 취업 후 신청 시 가능성 상승. 최대 체류 90일, 연장 사실상 불가.</div>
-  <div class="hb hy rub">⚠️ <strong>Ситуация</strong> — Украинский паспорт + §24 = риск. Но общежитие в Германии + работа повышают шансы. Максимум 90 дней, продление практически невозможно.</div>
-
+  <div class="hb hy kob">⚠️ <strong>핵심 상황</strong> — 우크라이나 국적 + §24 임시보호 조합이 불법체류 위험 신호로 읽힐 수 있음. 독일 기숙사 실거주지 있고 취업 후 신청 시 가능성 상승. 최대 체류 90일, 연장 사실상 불가.</div>
+  <div class="hb hy rub">⚠️ <strong>Ситуация</strong> — Украинский паспорт + §24 = риск. Общежитие и работа повышают шансы. Максимум 90 дней, продление практически невозможно.</div>
   <div class="sec">
-    <div class="sec-t kob">⚠️ 주요 리스크</div>
-    <div class="sec-t rub">⚠️ Основные риски</div>
+    <div class="sec-t"><span class="ko">⚠️ 주요 리스크 및 서류</span><span class="ru">⚠️ Риски и документы</span></div>
     <div class="card">
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">돌아갈 곳 — 독일 기숙사 실거주지 있음</div><div class="il rub">Куда возвращаться — есть общежитие</div><div class="id kob">독일 기숙사 실거주 → "돌아갈 곳 있음" 부분 소명 가능 / 단, §24가 2027년 3월 만료 예정이라 장기적 불안정으로 볼 수 있음</div><div class="id rub">Общежитие = есть куда вернуться / но §24 истекает март 2027 → долгосрочная нестабильность</div></div><span class="tag ty kob">부분 소명 가능</span><span class="tag ty rub">Частично</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">독일 거주 2년 미만 소명 필요</div><div class="il rub">Менее 2 лет в Германии — объяснение</div><div class="id kob">독일 KVAC 기준 2년 이상 거주 증명 요구 → 전쟁 피난 소명 편지로 대응 가능 / 심사관 재량</div><div class="id rub">KVAC требует 2+ лет / можно объяснить войной, решение за инспектором</div></div><span class="tag ty kob">소명 가능</span><span class="tag ty rub">Объяснимо</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">재정 증명 — 본인 통장 잔액이 핵심</div><div class="il rub">Финансы — ключевой фактор баланс</div><div class="id kob">무직 기준: 독일 은행 거래 내역서(최근 3개월) / 최소 잔액 기준 없으나 방문 기간 생활비 충당 가능한 수준 필요 / 취업 후엔 재직증명서+급여명세서 추가</div><div class="id rub">Без работы: выписка за 3 мес. / конкретного минимума нет, но нужно достаточно на период пребывания / после трудоустройства — добавить справку</div></div><span class="tag ty kob">잔액 필요</span><span class="tag ty rub">Нужен баланс</span></div>
-    </div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-t kob">✅ 유리한 조건</div>
-    <div class="sec-t rub">✅ Благоприятные условия</div>
-    <div class="card">
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">독일 기숙사 실거주지 + 취업 시 재직증명서</div><div class="il rub">Общежитие + справка с работы</div><div class="id kob">귀환할 실거주지 증거 + 취업 중이면 "돌아올 이유 있음" 논리 강화</div><div class="id rub">Доказательство места возврата + работа = причина вернуться</div></div></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">초청장 — 방문 목적 명확화</div><div class="il rub">Приглашение — уточняет цель</div><div class="id kob">C-3에 초청장 필수는 아니지만 있으면 심사관 입장에서 방문 목적이 명확해짐 / 나원준 작성</div><div class="id rub">Не обязательно, но помогает / пишет Вонджун</div></div><span class="tag tg kob">있으면 유리</span><span class="tag tg rub">Помогает</span></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">나원준과 독일 교제·동거 기록</div><div class="il rub">История отношений с Вонджуном в Германии</div><div class="id kob">나원준이 워홀로 독일에서 함께 산 기록 → 방문 목적(부모님 인사) 명확화</div><div class="id rub">Совместная жизнь с Вонджуном + цель визита (знакомство с родителями)</div></div></div>
-    </div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-t kob">📋 필요 서류</div>
-    <div class="sec-t rub">📋 Документы</div>
-    <div class="card">
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">독일 은행 거래 내역서</div><div class="il rub">Выписка из немецкого банка</div><div class="id kob">최근 3개월 / 입출금 내역 + 총 잔액</div><div class="id rub">За 3 месяца / движение + остаток</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">§24 임시보호 자격 증명 + 기숙사 거주 증명</div><div class="il rub">Подтверждение §24 + общежитие</div><div class="id kob">독일 합법 체류 증명 / 만료일 명시 / 기숙사 계약서 또는 거주확인서</div><div class="id rub">Законное пребывание / дата истечения / договор общежития</div></div></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">소명 편지</div><div class="il rub">Объяснительное письмо</div><div class="id kob">독일 거주 2년 미만 이유(전쟁) / 한국 방문 목적 / 귀환 의사 명시</div><div class="id rub">Причина &lt;2 лет (война) / цель / намерение вернуться</div></div><span class="tag ty kob">작성 필요</span><span class="tag ty rub">Написать</span></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">왕복 항공권</div><div class="il rub">Авиабилеты туда-обратно</div><div class="id kob">귀환 의지 증명 / 비자 발급 전 구매 시 거절 위험 있어 일정 확정 후 구매 권장</div><div class="id rub">Доказательство намерения вернуться / покупать после получения визы</div></div></div>
+      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">돌아갈 곳 — 기숙사 실거주지 있음</div><div class="il rub">Куда возвращаться — есть общежитие</div><div class="id kob">기숙사 실거주 → 부분 소명 가능. 단, §24 2027년 3월 만료 예정이라 장기적 불안정으로 읽힐 수 있음.</div><div class="id rub">Общежитие = есть куда вернуться. Но §24 истекает март 2027 → долгосрочная нестабильность.</div></div><span class="tag ty"><span class="ko">부분 소명 가능</span><span class="ru">Частично</span></span></div>
+      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">독일 거주 2년 미만 소명 + 재정 증명</div><div class="il rub">Менее 2 лет + финансы</div><div class="id kob">전쟁 피난 소명 편지 작성 필요. 독일 은행 거래 내역서(최근 3개월) + §24 체류허가 증명 + 기숙사 거주 증명.</div><div class="id rub">Объяснительное письмо (война). Выписка банка (3 мес.) + §24 + подтверждение общежития.</div></div><span class="tag ty"><span class="ko">소명 필요</span><span class="ru">Объяснить</span></span></div>
+      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">왕복 항공권 — 비자 발급 후 구매 권장</div><div class="il rub">Авиабилеты — покупать после получения визы</div></div></div>
     </div>
   </div>
 </div>
 
-<!-- H-1 -->
+<!-- ===== H-1 ===== -->
 <div id="panel-h1" class="panel">
   <div class="ph">
     <span class="badge b-green">H-1</span>
-    <span class="ph-title kob">워킹홀리데이 (독일)</span>
-    <span class="ph-title rub">Рабочий отпуск (Германия)</span>
-    <span class="ph-status s-pend kob">핵심 딜레마</span>
-    <span class="ph-status s-pend rub">Ключевая дилемма</span>
+    <span class="ph-title kob">워킹홀리데이 (독일) — 참고용</span>
+    <span class="ph-title rub">Рабочий отпуск (Германия) — справочно</span>
+    <span class="ph-status s-pend"><span class="ko">선택 안 함</span><span class="ru">Не выбрано</span></span>
   </div>
-
-  <div class="hb hg kob">✅ <strong>KVAC 베를린 (2026.03.21)</strong> — "장기사증 종류 상관없이 장기사증이면 면제대상에 해당될 수 있습니다" → H-1 워홀 포함. "해당될 수 있습니다" = 심사관 최종 재량.</div>
-  <div class="hb hg rub">✅ <strong>KVAC Берлин (21.03.2026)</strong> — Рабочий отпуск H-1 включён. "Может быть" = финальное решение за инспектором.</div>
-
-  <div class="hb hy kob">⚠️ <strong>핵심 딜레마</strong> — 워홀 가면 4월 푸른IPS 취업 기회 영구 소멸 (승원씨 마지막 기회). 워홀 안 가면 디아나 범죄경력증명서 4개국 준비 필요 (우크라이나 발급 불확실).</div>
-  <div class="hb hy rub">⚠️ <strong>Ключевая дилемма</strong> — Рабочий отпуск = потеря Pureun IPS навсегда. Без него = справки из 4 стран (Украина под вопросом).</div>
-
+  <div class="hb hy kob">⚠️ <strong>현재 상태</strong> — 푸른IPS 취업(4월 21일)으로 결정. 워홀은 가지 않음. 이 탭은 참고용으로만 유지. 워홀 갔을 경우의 시나리오 정리.</div>
+  <div class="hb hy rub">⚠️ <strong>Текущий статус</strong> — Выбрано трудоустройство в Pureun IPS (21 апр.). Рабочий отпуск не выбран. Эта вкладка — только справочно.</div>
+  <div class="hb hg kob">✅ <strong>KVAC 베를린 (2026.03.21)</strong> — H-1 포함 장기사증이면 범죄경력증명서·건강진단서 면제 가능. 최종 심사관 재량.</div>
+  <div class="hb hg rub">✅ <strong>KVAC Берлин (21.03.2026)</strong> — H-1 как долгосрочная виза → освобождение возможно. Финальное решение за инспектором.</div>
   <div class="sec">
-    <div class="sec-t kob">🎯 워홀의 이점</div>
-    <div class="sec-t rub">🎯 Плюсы рабочего отпуска</div>
+    <div class="sec-t"><span class="ko">🎯 워홀의 이점 (참고)</span><span class="ru">🎯 Плюсы рабочего отпуска (справочно)</span></div>
     <div class="card">
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">범죄경력증명서 4개국 + 건강진단서 면제</div><div class="il rub">Справки из 4 стран + медсправка не нужны</div><div class="id kob">우크라이나(전쟁 중) · 독일 · 헝가리 · 캐나다 전부 면제 + 결핵진단서 면제 → 서류 리스크 거의 제거</div><div class="id rub">Украина · Германия · Венгрия · Канада — все + туберкулёз → риски устранены</div></div><span class="tag tg kob">핵심 혜택</span><span class="tag tg rub">Ключевой плюс</span></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">교제 진정성 최강 증거</div><div class="il rub">Лучшее доказательство отношений</div><div class="id kob">같이 살며 쌓은 생활 기록 = F-6 위장결혼 의심 차단. 메신저·공과금·사진·여행 기록</div><div class="id rub">Совместная жизнь = блокирует подозрения в фиктивном браке</div></div></div>
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">§24 만료(2027년 3월) 전 한국 입국 완료 가능</div><div class="il rub">Въезд в Корею до истечения §24 (март 2027)</div><div class="id kob">워홀 + 10월 결혼 + F-6 신청(2~4주) = 11~12월 한국 입국 → §24 만료(3월) 전 완료 가능</div><div class="id rub">Рабочий отпуск + свадьба октябрь + F-6 = въезд ноябрь-декабрь → до истечения §24</div></div></div>
+      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">범죄경력증명서 4개국 + 건강진단서 면제</div><div class="il rub">Справки из 4 стран + медсправка не нужны</div><div class="id kob">우크라이나(전쟁 중)·독일·헝가리·캐나다 전부 면제. 서류 리스크 거의 제거.</div><div class="id rub">Украина, Германия, Венгрия, Канада — все устранены.</div></div><span class="tag tg"><span class="ko">핵심 혜택</span><span class="ru">Главный плюс</span></span></div>
+      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">교제 진정성 최강 증거</div><div class="il rub">Лучшее доказательство отношений</div><div class="id kob">같이 살며 쌓은 생활 기록 = 위장결혼 의심 차단. 워홀+10월 결혼+F-6 신청 시나리오에서 §24 만료(3월) 전 입국 가능.</div><div class="id rub">Совместная жизнь = блокирует подозрения в фиктивном браке.</div></div></div>
     </div>
   </div>
-
   <div class="sec">
-    <div class="sec-t kob">⚠️ 충돌 요소</div>
-    <div class="sec-t rub">⚠️ Конфликтующие факторы</div>
+    <div class="sec-t"><span class="ko">⚠️ 선택하지 않은 이유</span><span class="ru">⚠️ Почему не выбрано</span></div>
     <div class="card">
-      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">푸른IPS 취업 기회 영구 소멸</div><div class="il rub">Потеря Pureun IPS навсегда</div><div class="id kob">4월 취업 확정 / 워홀 가면 이 기회 영구 소멸 / 승원씨 연결 기회 현재가 마지막</div><div class="id rub">Работа с апреля подтверждена / рабочий отпуск = потеря навсегда</div></div><span class="tag tr kob">영구 소멸</span><span class="tag tr rub">Потеря навсегда</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">소득 공백 → 부모님 합산 필요</div><div class="il rub">Нет дохода → доход родителей</div><div class="id kob">워홀 기간 소득 불안정 → F-6 신청 시 부모님 소득 합산으로 해결 (소득금액증명원 확인 선행)</div><div class="id rub">Нестабильный доход → суммировать с родителями (сначала проверить справку)</div></div><span class="tag ty kob">해결 가능</span><span class="tag ty rub">Решаемо</span></div>
-    </div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-t kob">📋 면제 충족 조건 + 워홀 기본 정보</div>
-    <div class="sec-t rub">📋 Условия освобождения + основная информация</div>
-    <div class="card">
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">6개월 이상 계속 체류</div><div class="il rub">6+ месяцев непрерывно</div><div class="id kob">출국 후 3개월 이내 재입국 시 기간 합산 / 3개월 초과 출국 시 연속 체류 미인정</div><div class="id rub">Возврат в 3 мес. = суммируется / более 3 мес. = не считается</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">교제 사실 입증 자료 필수</div><div class="il rub">Доказательства отношений обязательны</div><div class="id kob">영어 메신저 기록 · 사진 · 출입국 기록 · 공동 영수증 · 인우보증서 별지 제출</div><div class="id rub">Переписка · фото · въезд/выезд · совместные расходы · поручительство</div></div></div>
-      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">독일 워홀 기본 조건</div><div class="il rub">Основные условия рабочего отпуска</div><div class="id kob">신청 나이: 만 18~34세 (나원준 26세 → 충족) / 독일 1회 한정 / 유효기간 최대 12개월 / 독일 주재 한국 대사관에서 신청</div><div class="id rub">Возраст: 18–34 лет (Вонджун 26 → ок) / только 1 раз в Германии / максимум 12 месяцев / подача в посольство Кореи в Германии</div></div></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">"해당될 수 있습니다" — 100% 보장 아님</div><div class="il rub">"Может быть" — не 100%</div><div class="id kob">KVAC 공식 답변이지만 최종 판단은 심사관 재량 / 아하 행정사 무료상담 통해 추가 확인 중</div><div class="id rub">Официальный ответ, но финальное решение за инспектором / уточняется у специалиста</div></div><span class="tag ty kob">확인 중</span><span class="tag ty rub">Уточняется</span></div>
+      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">푸른IPS 취업 기회 영구 소멸</div><div class="il rub">Потеря Pureun IPS навсегда</div><div class="id kob">승원씨 연결 기회, 현재가 마지막. 워홀 가면 이 기회 영구 소멸.</div><div class="id rub">Связь через Сынвона — последний шанс. Рабочий отпуск = потеря навсегда.</div></div><span class="tag tr"><span class="ko">영구 소멸</span><span class="ru">Навсегда</span></span></div>
+      <div class="item"><div class="dot db"></div><div class="ic"><div class="il kob">면제 조건: 6개월 이상 계속 체류 + 교제 입증</div><div class="il rub">Условие освобождения: 6+ мес. + отношения</div><div class="id kob">출국 후 3개월 이내 재입국 시 기간 합산 가능. 나이: 만 18~34세(26세 충족). 독일 1회 한정. 최대 12개월.</div><div class="id rub">Возврат в 3 мес. = суммируется. 18–34 (26 — ок). Только 1 раз в Германии. Макс. 12 мес.</div></div></div>
     </div>
   </div>
 </div>
 
-<!-- D-4 -->
+<!-- ===== D-4 ===== -->
 <div id="panel-d4" class="panel">
   <div class="ph">
     <span class="badge b-orange">D-4</span>
     <span class="ph-title kob">일반연수 (어학당) 비자</span>
     <span class="ph-title rub">Учебная виза (языковые курсы)</span>
-    <span class="ph-status s-warn kob">리스크 있음</span>
-    <span class="ph-status s-warn rub">Есть риски</span>
+    <span class="ph-status s-warn"><span class="ko">리스크 높음</span><span class="ru">Высокий риск</span></span>
   </div>
-
-  <div class="hb hy kob">⚠️ <strong>불가능하다고 단정할 수 없음</strong> — 고시 국가라 추가 심사 받는 건 맞지만 거절 확정은 아님. 부모 소득 없이 본인 잔고만으로 승인된 사례 존재. 학교·개인 상황·심사관 재량에 따라 달라지므로 신청 전 행정사 상담 필수.</div>
-  <div class="hb hy rub">⚠️ <strong>Нельзя сказать "невозможно"</strong> — Особый список = доп. проверка, не автоматический отказ. Есть случаи одобрения без дохода родителей. Зависит от вуза и инспектора. Консультация специалиста обязательна.</div>
-
-  <div class="sec">
-    <div class="sec-t kob">💰 필요 금액 (우크라이나 기준)</div>
-    <div class="sec-t rub">💰 Необходимые средства</div>
-    <div class="g2">
-      <div class="stat"><div class="sl kob">잔고증명</div><div class="sl rub">Баланс</div><div class="sv" style="color:var(--orange)">$10,000</div><div class="ss kob">인증대학 / 비인증 $20,000</div><div class="ss rub">аккред. / неаккред. $20,000</div></div>
-      <div class="stat"><div class="sl kob">학비(1년 필수)</div><div class="sl rub">Учёба(1 год)</div><div class="sv" style="color:var(--orange)">$5~6천</div><div class="ss kob">4학기 등록 의무</div><div class="ss rub">4 семестра обязат.</div></div>
-    </div>
-    <div class="hb hy kob">총 필요: <strong>약 $15,000~16,000 (약 2,000~2,200만원)</strong> / 학비는 입학허가서 발급 전 선납</div>
-    <div class="hb hy rub">Итого: <strong>~$15,000–16,000 (~20–22M вон)</strong> / учёба оплачивается до разрешения</div>
+  <div class="hb hy kob">⚠️ 불가능하다고 단정할 수 없음. 고시 국가라 추가 심사 받는 건 맞지만 거절 확정은 아님. F-6가 불가능한 상황 생기면 재검토. 행정사 상담 필수.</div>
+  <div class="hb hy rub">⚠️ Нельзя сказать "невозможно". Особый список = доп. проверка, не автоматический отказ. Рассматривать только если F-6 невозможен. Консультация специалиста обязательна.</div>
+  <div class="g2">
+    <div class="stat"><div class="sl"><span class="ko">잔고증명</span><span class="ru">Баланс</span></div><div class="sv" style="color:var(--orange)">$10,000</div><div class="ss"><span class="ko">인증대학 / 비인증 $20,000</span><span class="ru">аккред. / неаккред. $20,000</span></div></div>
+    <div class="stat"><div class="sl"><span class="ko">학비(1년 필수)</span><span class="ru">Учёба (1 год)</span></div><div class="sv" style="color:var(--orange)">$5~6천</div><div class="ss"><span class="ko">4학기 등록 의무</span><span class="ru">4 семестра обяз.</span></div></div>
   </div>
-
   <div class="sec">
-    <div class="sec-t kob">⚠️ 주요 리스크 및 장벽</div>
-    <div class="sec-t rub">⚠️ Основные риски</div>
+    <div class="sec-t"><span class="ko">⚠️ 주요 리스크</span><span class="ru">⚠️ Основные риски</span></div>
     <div class="card">
-      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">우크라이나 = 법무부 고시 21개국</div><div class="il rub">Украина = особый список МЮ (21 страна)</div><div class="id kob">추가 심사 + 부모 재직·소득증명 추가 제출 요구 + 4학기(1년) 등록 필수 (타 국가는 1학기도 가능)</div><div class="id rub">Доп. проверка + документы о доходах родителей + 4 семестра обязательно</div></div><span class="tag tr kob">고위험</span><span class="tag tr rub">Риск</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">부모님 재정 서류 제출 어려움</div><div class="il rub">Документы родителей — сложно</div><div class="id kob">디아나 부모님이 독일 정부 보조금 수령자 → 고시 국가 추가 서류 어려움. 단, 본인 잔고만으로 대체 승인된 사례 있음 (심사관 재량)</div><div class="id rub">Родители получают пособие → сложно с документами. Но есть случаи одобрения по собственному балансу.</div></div><span class="tag ty kob">어려움</span><span class="tag ty rub">Сложно</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">"돌아갈 곳" — C-3와 동일한 리스크</div><div class="il rub">"Куда возвращаться" — те же риски что C-3</div><div class="id kob">전쟁으로 본국 복귀 불가 + §24 불안정 → 기숙사 실거주지로 부분 소명 가능</div><div class="id rub">Война + §24 нестабилен → общежитие частично компенсирует</div></div><span class="tag ty kob">소명 가능</span><span class="tag ty rub">Частично</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">독일 거주 2년 미만 소명 필요</div><div class="il rub">Менее 2 лет в Германии — объяснение</div><div class="id kob">C-3와 동일 조건 / 전쟁 피난 소명 편지로 대응 가능</div><div class="id rub">Те же условия что C-3 / объяснить войной</div></div><span class="tag ty kob">소명 가능</span><span class="tag ty rub">Объяснимо</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">C-3 입국 후 D-4 전환 원칙적 불가</div><div class="il rub">C-3 → D-4 в принципе нельзя</div><div class="id kob">C 계열 비자로 입국 시 국내 체류자격 변경 원칙적 불가 / 일부 어학당에서 가능하다고 안내하나 법적으로 불명확</div><div class="id rub">Въезд по C → смена статуса в принципе невозможна / некоторые вузы говорят иначе, но юридически неясно</div></div><span class="tag ty kob">주의</span><span class="tag ty rub">Внимание</span></div>
+      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">우크라이나 = 법무부 고시 21개국</div><div class="il rub">Украина = особый список МЮ (21 страна)</div><div class="id kob">추가 심사 + 부모 재직·소득증명 추가 제출 + 4학기(1년) 등록 필수</div><div class="id rub">Доп. проверка + документы о доходах родителей + 4 семестра обязательно</div></div><span class="tag tr"><span class="ko">고위험</span><span class="ru">Риск</span></span></div>
+      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">부모님 재정 서류 제출 어려움</div><div class="il rub">Документы родителей — сложно</div><div class="id kob">디아나 부모님이 독일 정부 보조금 수령자. 본인 잔고만으로 대체 승인된 사례 있음 (심사관 재량)</div><div class="id rub">Родители Дианы получают пособие. Есть случаи одобрения только по личному балансу.</div></div><span class="tag ty"><span class="ko">어려움</span><span class="ru">Сложно</span></span></div>
     </div>
   </div>
-
-  <div class="hb hbu kob">💡 <strong>결론</strong> — F-6가 압도적으로 유리. D-4는 신청 전까지 모르는 영역이나 비용($15,000+)과 리스크 모두 높음. F-6가 불가능한 상황 생기면 재검토. 반드시 행정사 통해 개인 상황 점검 후 결정.</div>
-  <div class="hb hbu rub">💡 <strong>Вывод</strong> — F-6 намного лучше. D-4 нельзя исключать, но дороже и рискованнее. Рассматривать только если F-6 станет невозможным. Обязательна консультация специалиста.</div>
 </div>
 
-<!-- JEJU -->
+<!-- ===== 제주 ===== -->
 <div id="panel-jeju" class="panel">
   <div class="ph">
     <span class="badge b-purple">무비자</span>
     <span class="ph-title kob">제주도 무사증 입국</span>
     <span class="ph-title rub">Безвизовый въезд на Чеджу</span>
-    <span class="ph-status s-warn kob">조건부 가능</span>
-    <span class="ph-status s-warn rub">Условно возможно</span>
+    <span class="ph-status s-warn"><span class="ko">조건부 가능</span><span class="ru">Условно возможно</span></span>
   </div>
-
-  <div class="hb hg kob">✅ 우크라이나는 제주 무비자 불허 23개국 미포함 → 입국 가능 / 체류 30일 / 나원준 가족이 제주도로 이동하면 만남 가능</div>
-  <div class="hb hg rub">✅ Украина не в списке 23 стран → можно въехать / 30 дней / семья Вонджуна едет на Чеджу — встреча возможна</div>
-
+  <div class="hb hg kob">✅ 우크라이나는 제주 무비자 불허 23개국 미포함 → 입국 가능. 체류 30일. 나원준 가족이 제주로 이동하면 만남 + F-6 교제 입증 자료로 활용 가능.</div>
+  <div class="hb hg rub">✅ Украина не в списке 23 стран → въезд возможен. 30 дней. Семья Вонджуна едет на Чеджу → знакомство + доказательства для F-6.</div>
   <div class="sec">
-    <div class="sec-t kob">✅ 활용 가능한 시나리오</div>
-    <div class="sec-t rub">✅ Рабочий сценарий</div>
+    <div class="sec-t"><span class="ko">🔴 제한 사항</span><span class="ru">🔴 Ограничения</span></div>
     <div class="card">
-      <div class="item"><div class="dot dg"></div><div class="ic"><div class="il kob">나원준 가족이 제주도로 이동</div><div class="il rub">Семья Вонджуна едет на Чеджу</div><div class="id kob">디아나는 제주 직항으로 무비자 입국 → 나원준 가족이 제주로 오면 부모님 인사 가능 / 30일 체류 / F-6 교제 진정성 입증 자료로도 활용</div><div class="id rub">Диана въезжает на Чеджу без визы → семья приезжает → знакомство с родителями / 30 дней / используется как доказательство отношений для F-6</div></div><span class="tag tg kob">가능</span><span class="tag tg rub">Возможно</span></div>
+      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">독일→제주 직항 없음 → 오사카 경유 현실적</div><div class="il rub">Германия→Чеджу нет рейса → Осака реалистично</div><div class="id kob">우크라이나→일본 무비자. 중국 경유는 비자 필요 가능성 있어 확인 필요.</div><div class="id rub">Украина → Япония безвизово. Китай — возможно нужна виза, уточнить.</div></div><span class="tag ty"><span class="ko">경유국 비자 확인</span><span class="ru">Проверить транзит</span></span></div>
+      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">본토 이동 불가 / 입국심사 거절 가능성</div><div class="il rub">Материк закрыт / возможен отказ</div><div class="id kob">제주 30일만 체류. 서울·대전 등 본토 이동 불가. 귀환 항공권 + 재정 증명 지참 권장.</div><div class="id rub">Только Чеджу, 30 дней. Материковая Корея недоступна. Обратный билет + финансы.</div></div><span class="tag tr"><span class="ko">본토 불가</span><span class="ru">Материк закрыт</span></span></div>
     </div>
   </div>
-
-  <div class="sec">
-    <div class="sec-t kob">🔴 제한 사항</div>
-    <div class="sec-t rub">🔴 Ограничения</div>
-    <div class="card">
-      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">독일→제주 직항 없음 → 경유 필요</div><div class="il rub">Германия→Чеджу нет рейса → нужна пересадка</div><div class="id kob">반드시 제주 직항으로 입국 / 독일에서 직항 없음 → 오사카·베이징 등 경유 후 제주 직항 환승 필요 / 단, 우크라이나 여권으로 경유국 비자 필요 여부 각국 확인 필수 (일본은 현재 우크라이나 무비자, 중국은 비자 필요 가능성)</div><div class="id rub">Нужен прямой рейс на Чеджу / из Германии нет → пересадка в Осаке или Пекине / важно: нужна ли виза для Дианы в транзитной стране (Япония — безвизово для Украины, Китай — возможно нужна)</div></div><span class="tag ty kob">경유국 비자 확인</span><span class="tag ty rub">Проверить визу</span></div>
-      <div class="item"><div class="dot dr"></div><div class="ic"><div class="il kob">본토 이동 불가</div><div class="il rub">Нельзя на материк</div><div class="id kob">제주도 내 30일만 체류 / 서울·대전 등 본토 이동 불가 / 국내선 탑승 시 외국인 별도 심사로 통과 불가</div><div class="id rub">Только Чеджу 30 дней / нельзя в Сеул, Тэджон / отдельная проверка на внутренних рейсах</div></div><span class="tag tr kob">본토 불가</span><span class="tag tr rub">Материк закрыт</span></div>
-      <div class="item"><div class="dot dy"></div><div class="ic"><div class="il kob">입국심사 거절 가능성</div><div class="il rub">Возможен отказ при паспортном контроле</div><div class="id kob">무비자라도 제주 입국심사관 재량으로 거절 가능 / 귀환 항공권 + 체류 계획 + 재정 증명 지참 권장</div><div class="id rub">Безвизовый въезд не гарантирует пропуск / инспектор может отказать / рекомендуется: обратный билет + план пребывания + финансы</div></div><span class="tag ty kob">주의</span><span class="tag ty rub">Внимание</span></div>
-    </div>
-  </div>
-
-  <div class="hb hbu kob">💡 <strong>결론</strong> — 경유국 비자 문제 해결되면 부모님 인사 + F-6 교제 입증 자료로 활용 가능. 오사카 경유가 현실적 (우크라이나→일본 무비자). 본토 방문은 C-3 필요.</div>
-  <div class="hb hbu rub">💡 <strong>Вывод</strong> — При решении вопроса транзита (Осака — реалистично, Украина безвизово в Японию) — встреча с родителями и доказательства для F-6. Для материка нужна C-3.</div>
 </div>
 
 <script>
@@ -354,14 +394,27 @@ document.addEventListener('DOMContentLoaded', function() {
       this.classList.add('active');
     });
   });
-  document.querySelectorAll('.tab').forEach(function(tab) {
+  var mainColorMap = {f6:'c-blue',c3:'c-yellow',h1:'c-green',d4:'c-orange',jeju:'c-purple'};
+  document.querySelectorAll('.tab-bar .tab').forEach(function(tab) {
     tab.addEventListener('click', function() {
       var name = this.getAttribute('data-panel');
-      var color = this.getAttribute('data-color');
       document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-      document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active','c-blue','c-green','c-yellow','c-purple','c-orange'); });
+      document.querySelectorAll('.tab-bar .tab').forEach(function(t) {
+        t.classList.remove('active','c-blue','c-green','c-yellow','c-purple','c-orange');
+      });
       document.getElementById('panel-' + name).classList.add('active');
-      this.classList.add('active', color);
+      this.classList.add('active', mainColorMap[name] || 'c-blue');
+    });
+  });
+  document.querySelectorAll('.subtab').forEach(function(stab) {
+    stab.addEventListener('click', function() {
+      var subName = this.getAttribute('data-sub');
+      var bar = this.closest('.subtab-bar');
+      var panel = this.closest('.panel');
+      bar.querySelectorAll('.subtab').forEach(function(s) { s.classList.remove('active'); });
+      panel.querySelectorAll('.subpanel').forEach(function(sp) { sp.classList.remove('active'); });
+      this.classList.add('active');
+      document.getElementById('sub-' + subName).classList.add('active');
     });
   });
 });
